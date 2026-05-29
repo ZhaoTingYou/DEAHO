@@ -3393,6 +3393,38 @@ button {
     color: #f4f4f4;
   }
 
+  .chronicle-year-nav {
+    left: 12px;
+    top: auto;
+    bottom: 128px;
+    gap: 8px;
+    transform: none;
+  }
+
+  .chronicle-year-nav::before {
+    left: 5px;
+    top: 10px;
+    bottom: 10px;
+  }
+
+  .chronicle-year-nav button {
+    min-width: 54px;
+    padding: 6px 0 6px 18px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  .chronicle-year-nav button::before {
+    left: 1px;
+    width: 8px;
+    height: 8px;
+  }
+
+  .chronicle-year-nav button:hover,
+  .chronicle-year-nav button.is-active {
+    transform: translateX(2px);
+  }
+
   .chronicle-progress {
     left: 22px;
     right: 22px;
