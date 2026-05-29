@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DAEHO Page 4 Bento Animation</title>
+  <style>
+    :root {
+      --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+      --navy: #00254f;
+      --navy2: #063767;
+      --white-card: #d9d9d9;
+      --red: #ef4f55;
+      --ink: #101010;
+      --text: rgba(255,255,255,.96);
+      --line: rgba(255,255,255,.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 300vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background: transparent;
+      color: var(--text);
+      font-family: Inter, Pretendard, "Noto Sans KR", Arial, sans-serif;
+    }
+
+    .scroll-scene {
+      min-height: 300vh;
+      padding: 145vh 14px 80vh;
+    }
+
+    .section {
+      width: min(1502px, calc(100vw - 28px));
+      aspect-ratio: 1502 / 693;
+      position: sticky;
+      top: 50vh;
+      transform: translateY(-50%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 23.9% 37.8% 38.3%;
+      grid-template-rows: 39.9% 10.7% 33.9% 15.5%;
+      gap: 2px;
+      overflow: hidden;
+      background: transparent;
+      border-radius: 16px;
+    }
+
+    .tile {
+      position: relative;
+      overflow: hidden;
+      border-radius: 14px;
+      padding: clamp(10px, 2.25vw, 56px);
+      opacity: 0;
+      transform: translate3d(var(--from-x), var(--from-y), 0);
+      transition: background-color 200ms ease, transform 200ms ease, filter 200ms ease;
+      will-change: opacity, transform;
+      isolation: isolate;
+    }
+
+    .section.is-entered .tile {
+      animation: slideIn 860ms var(--ease-out-expo) forwards;
+      animation-delay: calc(300ms + var(--delay));
+    }
+
+    .tile:hover {
+      filter: brightness(1.08) !important;
+    }
+
+    .intro {
+      --from-x: -120px;
+      --from-y: -80px;
+      --delay: 360ms;
+      grid-column: 1;
+      grid-row: 1;
+      background:
+        radial-gradient(circle at 82% 75%, rgba(214,176,95,.26), transparent 30%),
+        var(--white-card);
+      color: var(--ink);
+    }
+
+    .shipment {
+      --from-x: -120px;
+      --from-y: 0;
+      --delay: 90ms;
+      grid-column: 1;
+      grid-row: 2 / 5;
+      background: var(--navy);
+    }
+
+    .years {
+      --from-x: 0;
+      --from-y: -120px;
+      --delay: 180ms;
+      grid-column: 2;
+      grid-row: 1 / 3;
+      background: var(--navy);
+    }
+
+    .zero {
+      --from-x: 0;
+      --from-y: 120px;
+      --delay: 560ms;
+      grid-column: 2;
+      grid-row: 3 / 5;
+      background: var(--navy);
+    }
+
+    .process {
+      --from-x: 120px;
+      --from-y: -80px;
+      --delay: 0ms;
+      grid-column: 3;
+      grid-row: 1 / 3;
+      background: var(--navy);
+    }
+
+    .annual {
+      --from-x: 120px;
+      --from-y: 0;
+      --delay: 450ms;
+      grid-column: 3;
+      grid-row: 3;
+      background: var(--navy);
+    }
+
+    .cta {
+      --from-x: 80px;
+      --from-y: 80px;
+      --delay: 270ms;
+      grid-column: 3;
+      grid-row: 4;
+      background: var(--red);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      text-align: right;
+      padding-right: clamp(24px, 3vw, 48px);
+      transform-origin: center;
+    }
+
+    .cta:hover {
+      transform: scale(1.02) !important;
+      filter: none !important;
+    }
+
+    .intro-kicker {
+      position: relative;
+      z-index: 2;
+      margin-bottom: clamp(12px, 1vw, 18px);
+      color: #8a6e34;
+      font-size: clamp(10px, .95vw, 14px);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .intro-title {
+      position: relative;
+      z-index: 2;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(18px, 3.5vw, 62px);
+      line-height: .94;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .intro-copy {
+      position: relative;
+      z-index: 2;
+      max-width: 280px;
+      margin-top: clamp(12px, 1.2vw, 22px);
+      color: rgba(16,16,16,.64);
+      font-size: clamp(8px, .9vw, 15px);
+      line-height: 1.55;
+    }
+
+    .ring {
+      position: absolute;
+      right: -16%;
+      bottom: -38%;
+      width: 88%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: clamp(14px, 2vw, 30px) solid rgba(36,30,21,.88);
+      border-top-color: rgba(242,218,151,.9);
+      border-left-color: rgba(174,135,58,.92);
+      transform: rotate(-23deg);
+      box-shadow: inset 0 0 28px rgba(255,255,255,.22), 0 22px 54px rgba(0,0,0,.22);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .stamp {
+      position: absolute;
+      right: 11%;
+      top: 14%;
+      width: 31%;
+      aspect-ratio: 1;
+      border: 1px solid rgba(138,110,52,.3);
+      border-radius: 50%;
+      color: rgba(138,110,52,.66);
+      display: grid;
+      place-items: center;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(13px, 1.35vw, 24px);
+      z-index: 2;
+    }
+
+    .metric {
+      position: relative;
+      z-index: 2;
+      display: block;
+      font-size: clamp(24px, 5.2vw, 92px);
+      line-height: 1.04;
+      font-weight: 760;
+      color: #fff;
+      letter-spacing: 0;
+    }
+
+    .shipment .metric,
+    .process .metric,
+    .annual .metric {
+      font-size: clamp(22px, 3.7vw, 64px);
+    }
+
+    .label {
+      display: block;
+      margin-top: clamp(16px, 1.6vw, 26px);
+      font-size: clamp(9px, 1.3vw, 22px);
+      line-height: 1.25;
+      color: #fff;
+      font-weight: 520;
+    }
+
+    .cz {
+      display: block;
+      margin-top: clamp(12px, 1.2vw, 20px);
+      font-size: clamp(9px, 1.15vw, 20px);
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .line-art {
+      position: absolute;
+      inset: auto 8% 7% 8%;
+      height: 64%;
+      color: white;
+      opacity: .18;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .line-art svg {
+      width: 100%;
+      height: 100%;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .cta::before {
+      content: "akfa";
+      position: absolute;
+      left: -20px;
+      bottom: -48%;
+      color: rgba(128,0,0,.15);
+      font-size: clamp(86px, 11vw, 178px);
+      line-height: .8;
+      font-weight: 820;
+      letter-spacing: -7px;
+      pointer-events: none;
+    }
+
+    .inside {
+      position: relative;
+      z-index: 2;
+      font-size: clamp(18px, 2.1vw, 34px);
+      line-height: 1;
+      font-weight: 520;
+    }
+
+    .inside small {
+      display: block;
+      margin-top: 10px;
+      font-size: clamp(11px, 1vw, 16px);
+      font-weight: 420;
+    }
+
+    .replay {
+      position: fixed;
+      right: 22px;
+      bottom: 20px;
+      border: 1px solid rgba(0,0,0,.16);
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      color: #222;
+      padding: 10px 14px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+    }
+
+    @media (max-width: 760px) {
+      .intro-copy {
+        display: none;
+      }
+
+      .intro-kicker {
+        margin-bottom: 7px;
+        font-size: 8px;
+      }
+
+      .stamp {
+        font-size: 10px;
+      }
+
+      .inside small {
+        margin-top: 4px;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translate3d(var(--from-x), var(--from-y), 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @media (max-width: 420px) {
+      body {
+        min-height: 220vh;
+      }
+
+      .scroll-scene {
+        min-height: 320vh;
+        padding: 150vh 12px 90vh;
+      }
+
+      .section {
+        width: min(430px, calc(100vw - 24px));
+        aspect-ratio: auto;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+      }
+
+      .tile {
+        min-height: 145px;
+        grid-column: auto !important;
+        grid-row: auto !important;
+      }
+
+      .intro,
+      .shipment,
+      .cta {
+        grid-column: 1 / -1 !important;
+      }
+
+      .intro {
+        min-height: 210px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-scene">
+    <main class="section" aria-label="DAEHO proof bento scroll opacity reveal">
+      <section class="tile intro">
+        <div class="intro-kicker">DAEHO PROOF</div>
+        <h1 class="intro-title">Crafted<br>to endure.</h1>
+        <p class="intro-copy">정밀 제작과 안정적인 납품으로 증명된 신뢰.</p>
+        <div class="stamp">1986</div>
+        <div class="ring"></div>
+      </section>
+
+      <section class="tile shipment">
+        <span class="metric">20,000+</span>
+        <span class="label">누적 납품</span>
+        <div class="line-art">
+          <svg viewBox="0 0 420 300"><path d="M36 186h210m-168 45h214M88 160h160v76H88zM140 160v-54h64v54M102 238a21 21 0 1 0 42 0 21 21 0 0 0-42 0Zm138 0a21 21 0 1 0 42 0 21 21 0 0 0-42 0Zm70-92c42-30 70-48 104-52M28 86c54-34 108-42 172-25 46 12 85 12 151-14"/></svg>
+        </div>
+      </section>
+
+      <section class="tile years">
+        <span class="metric">38년의<br>업력</span>
+        <span class="cz">CZ</span>
+        <div class="line-art">
+          <svg viewBox="0 0 600 260"><path d="M42 220C210 212 330 138 435 24m-8 2 62-22v65M68 182h55v-54h56v82h31v-122h48v90h36v-42h44v72M452 190v-60h34v78h33v-98h46v126"/></svg>
+        </div>
+      </section>
+
+      <section class="tile process">
+        <span class="metric">100% 전공정<br>자체진행</span>
+        <span class="cz">CZ</span>
+        <div class="line-art">
+          <svg viewBox="0 0 660 260"><path d="M142 126a57 57 0 1 0 114 0 57 57 0 0 0-114 0Zm210 0a57 57 0 1 0 114 0 57 57 0 0 0-114 0Zm214-64a57 57 0 1 0 0 114 57 57 0 0 0 0-114ZM255 126h97m114 0h43M199 84v84m-42-42h84"/></svg>
+        </div>
+      </section>
+
+      <section class="tile zero">
+        <span class="metric">0%</span>
+        <span class="label">납품사고</span>
+        <div class="line-art">
+          <svg viewBox="0 0 500 300"><path d="M250 23c44 38 91 53 142 64v74c0 74-48 120-142 155-94-35-142-81-142-155V87c51-11 98-26 142-64Zm-48 134 34 34 74-80M74 104c-48 34-65 80-48 137m400-137c48 34 65 80 48 137"/></svg>
+        </div>
+      </section>
+
+      <section class="tile annual">
+        <span class="metric">5000+</span>
+        <span class="label">매년 제작</span>
+        <div class="line-art">
+          <svg viewBox="0 0 700 230"><path d="M30 182h530M84 144h318v38H84zm26 19a9 9 0 1 0 18 0 9 9 0 0 0-18 0Zm88 0a9 9 0 1 0 18 0 9 9 0 0 0-18 0Zm88 0a9 9 0 1 0 18 0 9 9 0 0 0-18 0Zm88 0a9 9 0 1 0 18 0 9 9 0 0 0-18 0Zm180 20V84l-70-46-70 46v99M484 38a24 24 0 1 0 0 48 24 24 0 0 0 0-48Zm70 46a24 24 0 1 0 0 48 24 24 0 0 0 0-48Zm-140 0a24 24 0 1 0 0 48 24 24 0 0 0 0-48Z"/></svg>
+        </div>
+      </section>
+
+      <section class="tile cta">
+        <div class="inside">Inside AKFA<small>Learn more</small></div>
+      </section>
+    </main>
+  </div>
+
+  <button class="replay" type="button">Reset</button>
+
+  <script>
+    const section = document.querySelector('.section');
+    let hasPlayed = false;
+
+    const triggerSlideIn = () => {
+      if (hasPlayed) return;
+
+      const rect = section.getBoundingClientRect();
+      const triggerLine = window.innerHeight * .68;
+
+      if (rect.top <= triggerLine) {
+        hasPlayed = true;
+        section.classList.add('is-entered');
+        window.removeEventListener('scroll', triggerSlideIn);
+      }
+    };
+
+    document.querySelector('.replay').addEventListener('click', () => {
+      hasPlayed = false;
+      section.classList.remove('is-entered');
+      window.addEventListener('scroll', triggerSlideIn, { passive: true });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    triggerSlideIn();
+    window.addEventListener('scroll', triggerSlideIn, { passive: true });
+    window.addEventListener('resize', triggerSlideIn);
+  </script>
+</body>
+</html>

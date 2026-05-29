@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DAEHO HOME Recent Projects Motion</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --ease-out-expo: cubic-bezier(.22, 1, .36, 1);
+      --ease-film: cubic-bezier(.16, 1, .3, 1);
+      --ink: #07080a;
+      --paper: #f7f6f2;
+      --soft-paper: #efede7;
+      --navy: #00254f;
+      --gold: #b89043;
+      --red: #df4e52;
+      --source-news: url("../project-docs/figma/screenshots/Home%20news.png");
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--ink);
+      color: #111;
+      overflow-x: hidden;
+      font-family: Inter, Pretendard, "Noto Sans KR", Arial, sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 80% 20%, rgba(184, 144, 67, .14), transparent 28%),
+        linear-gradient(180deg, #06070a, #111318 46%, #07080a);
+    }
+
+    button,
+    a {
+      color: inherit;
+      font: inherit;
+    }
+
+    .demo-stage {
+      position: relative;
+      height: 420vh;
+    }
+
+    .pinned-scene {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100svh;
+      overflow: hidden;
+      isolation: isolate;
+      background: #07080a;
+    }
+
+    .proof-layer,
+    .news-layer {
+      position: absolute;
+      inset: 0;
+      will-change: opacity, transform, filter;
+    }
+
+    .proof-layer {
+      display: grid;
+      place-items: center;
+      padding: clamp(18px, 4vw, 70px);
+      opacity: calc(1 - var(--proof-exit, 0) * .88);
+      transform:
+        translate3d(0, calc(var(--proof-exit, 0) * -8vh), 0)
+        scale(calc(1 - var(--proof-exit, 0) * .105));
+      filter: brightness(calc(1 - var(--proof-exit, 0) * .38)) blur(calc(var(--proof-exit, 0) * 1.4px));
+    }
+
+    .proof-layer::before,
+    .proof-layer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .proof-layer::before {
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, .5), transparent 36%, rgba(0, 0, 0, .42)),
+        radial-gradient(circle at 50% 52%, rgba(255, 255, 255, .07), transparent 36%);
+    }
+
+    .proof-layer::after {
+      opacity: var(--proof-exit, 0);
+      background: rgba(0, 0, 0, .46);
+    }
+
+    .proof-poster {
+      position: relative;
+      z-index: 1;
+      width: min(1260px, 92vw);
+      aspect-ratio: 1502 / 693;
+      display: grid;
+      grid-template-columns: 24% 38% 38%;
+      grid-template-rows: 40% 11% 34% 15%;
+      gap: 2px;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 44px 120px rgba(0, 0, 0, .48);
+    }
+
+    .proof-card {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(18px, 2.5vw, 44px);
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .proof-card.light {
+      background:
+        radial-gradient(circle at 80% 76%, rgba(184, 144, 67, .24), transparent 32%),
+        #d9d7d0;
+      color: #171717;
+    }
+
+    .proof-card.red {
+      background: var(--red);
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      text-align: right;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(20px, 2.2vw, 38px);
+      line-height: .95;
+    }
+
+    .proof-card:nth-child(1) {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .proof-card:nth-child(2) {
+      grid-column: 1;
+      grid-row: 2 / 5;
+    }
+
+    .proof-card:nth-child(3) {
+      grid-column: 2;
+      grid-row: 1 / 3;
+    }
+
+    .proof-card:nth-child(4) {
+      grid-column: 2;
+      grid-row: 3 / 5;
+    }
+
+    .proof-card:nth-child(5) {
+      grid-column: 3;
+      grid-row: 1 / 3;
+    }
+
+    .proof-card:nth-child(6) {
+      grid-column: 3;
+      grid-row: 3;
+    }
+
+    .proof-card:nth-child(7) {
+      grid-column: 3;
+      grid-row: 4;
+    }
+
+    .proof-kicker {
+      display: block;
+      margin-bottom: 16px;
+      color: #8a6e34;
+      font-size: clamp(9px, .92vw, 13px);
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .proof-title {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(24px, 3.7vw, 58px);
+      font-weight: 400;
+      line-height: .92;
+      letter-spacing: 0;
+    }
+
+    .proof-number {
+      display: block;
+      margin-bottom: clamp(12px, 2vw, 26px);
+      font-size: clamp(34px, 5vw, 78px);
+      font-weight: 760;
+      letter-spacing: 0;
+      line-height: 1;
+    }
+
+    .proof-label {
+      display: block;
+      max-width: 330px;
+      font-size: clamp(13px, 1.25vw, 22px);
+      line-height: 1.28;
+      color: rgba(255, 255, 255, .92);
+    }
+
+    .proof-line {
+      position: absolute;
+      inset: auto 10% 8% auto;
+      width: 34%;
+      aspect-ratio: 1;
+      border: 1px solid rgba(255, 255, 255, .25);
+      border-radius: 50%;
+      opacity: .42;
+    }
+
+    .news-layer {
+      z-index: 2;
+      background: var(--paper);
+      transform:
+        translate3d(0, calc((1 - var(--news-in, 0)) * 104svh), 0)
+        scale(calc(.955 + var(--news-in, 0) * .045));
+      border-radius: calc((1 - var(--news-in, 0)) * 34px);
+      box-shadow: 0 calc((1 - var(--news-in, 0)) * -44px) 120px rgba(0, 0, 0, .42);
+      overflow: hidden;
+    }
+
+    .news-layer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(247, 246, 242, .98) 42%, #f2f0eb),
+        radial-gradient(circle at 50% 0, rgba(184, 144, 67, .08), transparent 32%);
+    }
+
+    .news-inner {
+      position: relative;
+      z-index: 1;
+      min-height: 100%;
+      padding: clamp(34px, 7svh, 72px) 0 clamp(26px, 5svh, 48px);
+      transform: translate3d(0, calc(var(--content-drift, 0) * -5.5vh), 0);
+      will-change: transform;
+    }
+
+    .section-title {
+      margin: 0 auto;
+      color: #191919;
+      text-align: center;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(9px, .82vw, 12px);
+      font-weight: 400;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(18px);
+      transition:
+        opacity 900ms var(--ease-film),
+        transform 900ms var(--ease-film);
+    }
+
+    .news-layer.is-news-active .section-title {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 150ms;
+    }
+
+    .project-window {
+      position: relative;
+      width: 100%;
+      margin-top: clamp(42px, 6.4svh, 68px);
+      overflow: visible;
+    }
+
+    .project-track {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(216px, 360px));
+      justify-content: center;
+      align-items: start;
+      gap: clamp(36px, 7.2vw, 86px);
+      width: max-content;
+      min-width: 100%;
+      padding-inline: clamp(24px, 7vw, 90px);
+      transform: translate3d(calc((1 - var(--news-in, 0)) * 5vw), 0, 0);
+      transition: transform 850ms var(--ease-film);
+    }
+
+    .project-card {
+      position: relative;
+      aspect-ratio: 370 / 460;
+      width: clamp(216px, 23.8vw, 360px);
+      opacity: 0;
+      transform: translate3d(0, 44px, 0) scale(.985);
+      transition:
+        opacity 980ms var(--ease-film),
+        transform 980ms var(--ease-film),
+        filter 360ms ease;
+      will-change: opacity, transform;
+    }
+
+    .project-card:nth-child(2) {
+      margin-top: clamp(-4px, -1.5svh, -12px);
+    }
+
+    .project-card:nth-child(3) {
+      filter: grayscale(1) contrast(.9) brightness(1.12);
+    }
+
+    .news-layer.is-news-active .project-card {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    .news-layer.is-news-active .project-card:nth-child(1) {
+      transition-delay: 310ms;
+    }
+
+    .news-layer.is-news-active .project-card:nth-child(2) {
+      transition-delay: 450ms;
+    }
+
+    .news-layer.is-news-active .project-card:nth-child(3) {
+      transition-delay: 590ms;
+    }
+
+    .project-art {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #1e1f21;
+      box-shadow: 0 20px 50px rgba(30, 28, 23, .1);
+      transition:
+        transform 520ms var(--ease-film),
+        filter 520ms ease,
+        opacity 520ms ease;
+    }
+
+    .project-art.source {
+      background-image: var(--source-news);
+      background-size: 406% auto;
+      background-repeat: no-repeat;
+    }
+
+    .project-art.source-a {
+      background-position: 43.1% 18.3%;
+    }
+
+    .project-art.source-c {
+      background-position: 86.7% 18.3%;
+    }
+
+    .project-art.poster {
+      display: grid;
+      align-content: end;
+      padding: clamp(18px, 2.4vw, 34px);
+      color: white;
+      background:
+        linear-gradient(180deg, rgba(22, 20, 9, .08), rgba(20, 16, 4, .56)),
+        radial-gradient(circle at 76% 14%, rgba(255, 242, 168, .92), transparent 17%),
+        radial-gradient(circle at 20% 20%, rgba(255, 223, 91, .42), transparent 26%),
+        linear-gradient(145deg, #9b8b10, #d4bb2e 42%, #4e4214);
+    }
+
+    .project-art.poster::before {
+      content: "2024-2025 SEASON";
+      position: absolute;
+      top: 8%;
+      left: 9%;
+      color: rgba(255, 255, 255, .86);
+      font-size: clamp(8px, .82vw, 12px);
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+
+    .project-art.poster::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255, 255, 255, .75) 0 1.2px, transparent 1.3px),
+        linear-gradient(115deg, transparent 0 38%, rgba(255, 255, 255, .34) 39%, transparent 43%);
+      background-size: 34px 34px, 100% 100%;
+      opacity: .46;
+      mix-blend-mode: screen;
+    }
+
+    .poster-title {
+      position: relative;
+      z-index: 1;
+      max-width: 5.8em;
+      margin: 0 0 clamp(18px, 2.6vw, 36px);
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      font-size: clamp(40px, 6vw, 74px);
+      line-height: .83;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      text-shadow: 0 7px 0 rgba(79, 58, 0, .26);
+      transform: rotate(-5deg);
+    }
+
+    .poster-team {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .project-card:hover {
+      z-index: 5;
+      filter: grayscale(0) contrast(1) brightness(1);
+    }
+
+    .project-card:hover .project-art {
+      transform: scale(1.035);
+    }
+
+    .view-more-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: clamp(30px, 4.8svh, 52px);
+      opacity: 0;
+      transform: translateY(18px);
+      transition:
+        opacity 720ms var(--ease-film),
+        transform 720ms var(--ease-film);
+    }
+
+    .news-layer.is-news-active .view-more-wrap {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 760ms;
+    }
+
+    .view-more-link {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 0 24px;
+      border: 1px solid rgba(17, 17, 17, .22);
+      border-radius: 999px;
+      color: rgba(17, 17, 17, .78);
+      background: rgba(247, 246, 242, .2);
+      text-decoration: none;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(10px, .82vw, 12px);
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      transition:
+        border-color 220ms ease,
+        color 220ms ease,
+        background 220ms ease,
+        transform 220ms ease;
+    }
+
+    .view-more-link::after {
+      content: "+";
+      font-family: Inter, Pretendard, "Noto Sans KR", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1;
+      letter-spacing: 0;
+      transform: translateY(-1px);
+      transition: transform 220ms ease;
+    }
+
+    .view-more-link:hover {
+      border-color: rgba(17, 17, 17, .52);
+      color: #111;
+      background: rgba(255, 255, 255, .42);
+      transform: translateY(-1px);
+    }
+
+    .view-more-link:hover::after {
+      transform: translate(3px, -1px);
+    }
+
+    .ring-medal {
+      position: absolute;
+      right: -15%;
+      bottom: -9%;
+      z-index: 3;
+      width: 48%;
+      aspect-ratio: 1.23;
+      border-radius: 48%;
+      display: grid;
+      place-items: center;
+      color: #7f2308;
+      font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+      font-size: clamp(16px, 2.1vw, 31px);
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, .48);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .92), rgba(198, 199, 198, .9) 28%, rgba(255, 245, 207, .92) 44%, rgba(143, 110, 45, .92) 63%, rgba(240, 227, 177, .92)),
+        conic-gradient(from 20deg, #f5f0df, #8c8f92, #fff6d0, #b18025, #f6ecd5, #83868a, #f5f0df);
+      border: 8px solid rgba(217, 208, 177, .86);
+      box-shadow: 0 24px 28px rgba(0, 0, 0, .18);
+      animation: ringFloat 4.8s var(--ease-film) infinite alternate;
+      pointer-events: none;
+    }
+
+    .ring-medal::before,
+    .ring-medal::after {
+      content: "";
+      position: absolute;
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .ring-medal::before {
+      inset: 14%;
+      border: 8px solid rgba(255, 255, 255, .76);
+      box-shadow: inset 0 0 0 4px rgba(137, 111, 57, .42);
+    }
+
+    .ring-medal::after {
+      inset: 36% 5%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #b93519, #f4d05c, #9f2f13);
+      transform: rotate(-3deg);
+      box-shadow: 0 7px 10px rgba(0, 0, 0, .18);
+    }
+
+    .ring-medal span {
+      position: relative;
+      z-index: 1;
+      transform: rotate(-3deg);
+    }
+
+    .brand-official {
+      margin-top: clamp(50px, 8.4svh, 92px);
+      opacity: 0;
+      transform: translateY(24px);
+      transition:
+        opacity 850ms var(--ease-film),
+        transform 850ms var(--ease-film);
+    }
+
+    .news-layer.is-brand-active .brand-official {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 120ms;
+    }
+
+    .brand-title {
+      margin: 0 0 clamp(18px, 2.6svh, 28px);
+      color: rgba(17, 17, 17, .62);
+      text-align: center;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(9px, .78vw, 12px);
+      font-weight: 400;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .logo-mask {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      gap: clamp(10px, 1.9svh, 18px);
+      padding: 2px 0;
+    }
+
+    .logo-mask::before,
+    .logo-mask::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      z-index: 2;
+      width: min(16vw, 180px);
+      pointer-events: none;
+    }
+
+    .logo-mask::before {
+      left: 0;
+      background: linear-gradient(90deg, var(--paper), rgba(247, 246, 242, 0));
+    }
+
+    .logo-mask::after {
+      right: 0;
+      background: linear-gradient(270deg, var(--paper), rgba(247, 246, 242, 0));
+    }
+
+    .logo-row {
+      display: flex;
+      width: max-content;
+      gap: clamp(28px, 4.8vw, 64px);
+      animation: marquee 58s linear infinite;
+      will-change: transform;
+    }
+
+    .logo-row:nth-child(2) {
+      animation-duration: 68s;
+      animation-direction: reverse;
+    }
+
+    .logo-row:nth-child(3) {
+      animation-duration: 78s;
+    }
+
+    .logo-mask:hover .logo-row {
+      animation-play-state: paused;
+    }
+
+    .logo-item {
+      display: inline-flex;
+      min-width: clamp(96px, 10vw, 154px);
+      align-items: center;
+      justify-content: center;
+      color: rgba(17, 17, 17, .48);
+      font-size: clamp(13px, 1.22vw, 18px);
+      font-weight: 760;
+      letter-spacing: -.01em;
+      white-space: nowrap;
+      filter: grayscale(1);
+      transition:
+        color 220ms ease,
+        opacity 220ms ease,
+        transform 220ms ease,
+        filter 220ms ease;
+    }
+
+    .logo-item.small {
+      font-size: clamp(11px, .95vw, 14px);
+      font-weight: 650;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+
+    .logo-item:hover {
+      color: rgba(17, 17, 17, .95);
+      filter: grayscale(0);
+      transform: translateY(-2px);
+    }
+
+    .end-space {
+      height: 90vh;
+      background: linear-gradient(180deg, var(--paper), #e8e4dc);
+    }
+
+    @keyframes ringFloat {
+      from {
+        transform: translate3d(0, 0, 0) rotate(-1deg);
+      }
+
+      to {
+        transform: translate3d(0, -10px, 0) rotate(2deg);
+      }
+    }
+
+    @keyframes marquee {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    @media (max-width: 820px) {
+      .demo-stage {
+        height: 500vh;
+      }
+
+      .proof-layer {
+        padding: 22px 14px;
+        transform:
+          translate3d(0, calc(var(--proof-exit, 0) * -5vh), 0)
+          scale(calc(1 - var(--proof-exit, 0) * .075));
+      }
+
+      .proof-poster {
+        width: min(560px, 91vw);
+        aspect-ratio: 4 / 5.35;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat(4, 1fr);
+        border-radius: 14px;
+        box-shadow: 0 26px 72px rgba(0, 0, 0, .44);
+      }
+
+      .proof-card {
+        padding: 15px;
+      }
+
+      .proof-kicker {
+        margin-bottom: 9px;
+        font-size: 8px;
+      }
+
+      .proof-title {
+        font-size: clamp(25px, 9vw, 38px);
+      }
+
+      .proof-number {
+        margin-bottom: 8px;
+        font-size: clamp(28px, 10vw, 42px);
+      }
+
+      .proof-label {
+        font-size: clamp(11px, 3.45vw, 14px);
+      }
+
+      .proof-card:nth-child(1) {
+        grid-column: 1 / 3;
+        grid-row: 1;
+      }
+
+      .proof-card:nth-child(2) {
+        grid-column: 1;
+        grid-row: 2 / 4;
+      }
+
+      .proof-card:nth-child(3) {
+        grid-column: 2;
+        grid-row: 2;
+      }
+
+      .proof-card:nth-child(4) {
+        grid-column: 2;
+        grid-row: 3;
+      }
+
+      .proof-card:nth-child(5) {
+        grid-column: 1;
+        grid-row: 4;
+      }
+
+      .proof-card:nth-child(6) {
+        grid-column: 2;
+        grid-row: 4;
+      }
+
+      .proof-card:nth-child(7) {
+        display: none;
+      }
+
+      .news-inner {
+        min-height: 100svh;
+        padding-top: clamp(34px, 7svh, 54px);
+        padding-bottom: 26px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .project-window {
+        margin-top: clamp(24px, 4svh, 34px);
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+        padding-left: 6vw;
+        padding-right: 0;
+      }
+
+      .project-window::-webkit-scrollbar {
+        display: none;
+      }
+
+      .project-track {
+        display: flex;
+        justify-content: flex-start;
+        min-width: auto;
+        margin-left: 6vw;
+        padding-inline: 0 18vw;
+        gap: 22px;
+      }
+
+      .project-card {
+        flex: 0 0 min(68vw, 286px);
+        width: min(68vw, 286px);
+        max-height: 42svh;
+        scroll-snap-align: start;
+      }
+
+      .project-card:nth-child(2) {
+        margin-top: 0;
+      }
+
+      .poster-title {
+        font-size: clamp(34px, 13vw, 58px);
+      }
+
+      .ring-medal {
+        right: -10%;
+        bottom: -7%;
+        width: 43%;
+        border-width: 6px;
+        font-size: clamp(12px, 4.2vw, 18px);
+        box-shadow: 0 14px 20px rgba(0, 0, 0, .16);
+      }
+
+      .ring-medal::before {
+        border-width: 5px;
+      }
+
+      .brand-official {
+        margin-top: auto;
+        padding-top: clamp(26px, 4svh, 38px);
+      }
+
+      .view-more-wrap {
+        margin-top: clamp(22px, 3.2svh, 30px);
+      }
+
+      .view-more-link {
+        min-height: 38px;
+        padding: 0 20px;
+        font-size: 10px;
+      }
+
+      .logo-row {
+        gap: 22px;
+      }
+
+      .logo-item {
+        min-width: 104px;
+        font-size: 13px;
+      }
+
+      .logo-item.small {
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .project-track {
+        padding-inline: 0 20vw;
+        gap: 18px;
+      }
+
+      .project-card {
+        flex-basis: 70vw;
+        width: 70vw;
+      }
+
+      .brand-title {
+        margin-bottom: 14px;
+      }
+
+      .logo-mask {
+        gap: 9px;
+      }
+
+      .logo-item {
+        min-width: 96px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .proof-layer,
+      .news-layer,
+      .news-inner,
+      .section-title,
+      .project-card,
+      .project-art,
+      .brand-official,
+      .logo-row,
+      .ring-medal {
+        animation: none !important;
+        transition-duration: 1ms !important;
+      }
+
+      .proof-layer {
+        opacity: 0;
+      }
+
+      .news-layer {
+        transform: none;
+        border-radius: 0;
+      }
+
+      .section-title,
+      .project-card,
+      .brand-official {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="demo-stage" aria-label="Recent projects transition demo">
+      <div class="pinned-scene" id="scene">
+        <div class="proof-layer" aria-hidden="true">
+          <div class="proof-poster">
+            <article class="proof-card light">
+              <span class="proof-kicker">DAEHO PROOF</span>
+              <h2 class="proof-title">Crafted<br>to endure.</h2>
+            </article>
+            <article class="proof-card">
+              <span class="proof-number">20,000+</span>
+              <span class="proof-label">누적 납품</span>
+              <span class="proof-line"></span>
+            </article>
+            <article class="proof-card">
+              <span class="proof-number">38</span>
+              <span class="proof-label">년의 업력</span>
+              <span class="proof-line"></span>
+            </article>
+            <article class="proof-card">
+              <span class="proof-number">0%</span>
+              <span class="proof-label">납품사고</span>
+              <span class="proof-line"></span>
+            </article>
+            <article class="proof-card">
+              <span class="proof-number">100%</span>
+              <span class="proof-label">전공정 자체진행</span>
+              <span class="proof-line"></span>
+            </article>
+            <article class="proof-card">
+              <span class="proof-number">5,000+</span>
+              <span class="proof-label">매년 제작</span>
+              <span class="proof-line"></span>
+            </article>
+            <article class="proof-card red">Inside<br>AKFA</article>
+          </div>
+        </div>
+
+        <section class="news-layer" id="newsLayer" aria-label="Recent projects">
+          <div class="news-inner">
+            <h1 class="section-title">Recent Projects</h1>
+
+            <div class="project-window">
+              <div class="project-track">
+                <article class="project-card">
+                  <div class="project-art source source-a" aria-hidden="true"></div>
+                  <div class="ring-medal" aria-hidden="true"><span>Champion</span></div>
+                </article>
+
+                <article class="project-card">
+                  <div class="project-art poster" aria-hidden="true">
+                    <h2 class="poster-title">Champions</h2>
+                    <p class="poster-team">LG Sakers</p>
+                  </div>
+                  <div class="ring-medal" aria-hidden="true"><span>Champion</span></div>
+                </article>
+
+                <article class="project-card">
+                  <div class="project-art source source-c" aria-hidden="true"></div>
+                  <div class="ring-medal" aria-hidden="true"><span>Champion</span></div>
+                </article>
+              </div>
+            </div>
+
+            <div class="view-more-wrap">
+              <a class="view-more-link" href="/news">View More</a>
+            </div>
+
+            <aside class="brand-official" aria-label="Brand official partners">
+              <h2 class="brand-title">Brand Official</h2>
+              <div class="logo-mask">
+                <div class="logo-row">
+                  <span class="logo-item">pcn</span>
+                  <span class="logo-item">KB 국민은행</span>
+                  <span class="logo-item">NH농협은행</span>
+                  <span class="logo-item small">DOYAK</span>
+                  <span class="logo-item small">BHL</span>
+                  <span class="logo-item small">SHIFT UP</span>
+                  <span class="logo-item">신한은행</span>
+                  <span class="logo-item">IPARTNERS</span>
+                  <span class="logo-item">우리은행</span>
+                  <span class="logo-item">INNORED</span>
+                  <span class="logo-item">pcn</span>
+                  <span class="logo-item">KB 국민은행</span>
+                  <span class="logo-item">NH농협은행</span>
+                  <span class="logo-item small">DOYAK</span>
+                  <span class="logo-item small">BHL</span>
+                  <span class="logo-item small">SHIFT UP</span>
+                  <span class="logo-item">신한은행</span>
+                  <span class="logo-item">IPARTNERS</span>
+                  <span class="logo-item">우리은행</span>
+                  <span class="logo-item">INNORED</span>
+                </div>
+                <div class="logo-row">
+                  <span class="logo-item small">NC Entertainment</span>
+                  <span class="logo-item small">YeonSung Apparel</span>
+                  <span class="logo-item">전북은행</span>
+                  <span class="logo-item">SC 제일은행</span>
+                  <span class="logo-item">JK 프렌즈</span>
+                  <span class="logo-item small">Charm Technology</span>
+                  <span class="logo-item">kakaobank</span>
+                  <span class="logo-item">KREITs</span>
+                  <span class="logo-item">Kbank</span>
+                  <span class="logo-item">KRAFTON</span>
+                  <span class="logo-item small">NC Entertainment</span>
+                  <span class="logo-item small">YeonSung Apparel</span>
+                  <span class="logo-item">전북은행</span>
+                  <span class="logo-item">SC 제일은행</span>
+                  <span class="logo-item">JK 프렌즈</span>
+                  <span class="logo-item small">Charm Technology</span>
+                  <span class="logo-item">kakaobank</span>
+                  <span class="logo-item">KREITs</span>
+                  <span class="logo-item">Kbank</span>
+                  <span class="logo-item">KRAFTON</span>
+                </div>
+                <div class="logo-row">
+                  <span class="logo-item">toss bank</span>
+                  <span class="logo-item">KEB 하나은행</span>
+                  <span class="logo-item small">A Partners</span>
+                  <span class="logo-item">우리은행</span>
+                  <span class="logo-item">INNORED</span>
+                  <span class="logo-item small">SHIFT UP</span>
+                  <span class="logo-item">신한은행</span>
+                  <span class="logo-item">KRAFTON</span>
+                  <span class="logo-item">Kbank</span>
+                  <span class="logo-item">KB 국민은행</span>
+                  <span class="logo-item">toss bank</span>
+                  <span class="logo-item">KEB 하나은행</span>
+                  <span class="logo-item small">A Partners</span>
+                  <span class="logo-item">우리은행</span>
+                  <span class="logo-item">INNORED</span>
+                  <span class="logo-item small">SHIFT UP</span>
+                  <span class="logo-item">신한은행</span>
+                  <span class="logo-item">KRAFTON</span>
+                  <span class="logo-item">Kbank</span>
+                  <span class="logo-item">KB 국민은행</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </div>
+    </section>
+    <div class="end-space" aria-hidden="true"></div>
+  </main>
+
+  <script>
+    const scene = document.getElementById("scene");
+    const stage = document.querySelector(".demo-stage");
+    const newsLayer = document.getElementById("newsLayer");
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    function clamp(value, min = 0, max = 1) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function easeOutCubic(value) {
+      return 1 - Math.pow(1 - value, 3);
+    }
+
+    function easeInOutCubic(value) {
+      return value < .5
+        ? 4 * value * value * value
+        : 1 - Math.pow(-2 * value + 2, 3) / 2;
+    }
+
+    function updateScene() {
+      if (prefersReduced.matches) {
+        scene.style.setProperty("--proof-exit", 1);
+        scene.style.setProperty("--news-in", 1);
+        scene.style.setProperty("--content-drift", 1);
+        newsLayer.classList.add("is-news-active", "is-brand-active");
+        return;
+      }
+
+      const rect = stage.getBoundingClientRect();
+      const maxTravel = Math.max(1, rect.height - window.innerHeight);
+      const progress = clamp(-rect.top / maxTravel);
+      const isMobile = window.innerWidth <= 820;
+      const transitionProgress = isMobile
+        ? easeInOutCubic(clamp((progress - .02) / .46))
+        : easeInOutCubic(clamp((progress - .06) / .62));
+      const proofProgress = isMobile
+        ? easeOutCubic(clamp((progress - .18) / .5))
+        : easeOutCubic(clamp((progress - .02) / .56));
+      const contentProgress = isMobile
+        ? easeOutCubic(clamp((progress - .42) / .36))
+        : easeOutCubic(clamp((progress - .52) / .36));
+
+      scene.style.setProperty("--proof-exit", proofProgress.toFixed(4));
+      scene.style.setProperty("--news-in", transitionProgress.toFixed(4));
+      scene.style.setProperty("--content-drift", contentProgress.toFixed(4));
+      newsLayer.classList.toggle("is-news-active", progress > (isMobile ? .22 : .36));
+      newsLayer.classList.toggle("is-brand-active", progress > (isMobile ? .48 : .58));
+    }
+
+    updateScene();
+    window.addEventListener("scroll", updateScene, { passive: true });
+    window.addEventListener("resize", updateScene);
+    prefersReduced.addEventListener("change", updateScene);
+
+    const previewScroll = Number(new URLSearchParams(window.location.search).get("scroll"));
+    if (Number.isFinite(previewScroll) && previewScroll > 0) {
+      const applyPreviewScroll = () => {
+        window.scrollTo(0, previewScroll);
+        updateScene();
+      };
+
+      requestAnimationFrame(applyPreviewScroll);
+      window.addEventListener("load", () => {
+        requestAnimationFrame(applyPreviewScroll);
+        setTimeout(applyPreviewScroll, 80);
+        setTimeout(applyPreviewScroll, 240);
+      }, { once: true });
+    }
+  </script>
+</body>
+</html>

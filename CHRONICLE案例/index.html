@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAEHO | 크로니클</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Pretendard:wght@100;300;600&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --brand-red: #8b0000; --bg: #ffffff; --text: #1a1a1a; --gold: #c5a059;
+            --font-main: 'Pretendard', sans-serif; --font-serif: 'Nanum Myeongjo', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); color: var(--text); font-family: var(--font-main); overflow: hidden; }
+
+        /* --- 1. 오프닝 애니메이션 --- */
+        #intro-layer {
+            position: fixed; inset: 0; background: #000; z-index: 2000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        #intro-logo { font-size: 2.5rem; color: white; letter-spacing: 12px; font-weight: 100; filter: blur(15px); opacity: 0; }
+        .loader-svg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 280px; height: 280px; }
+        .loader-circle { fill: none; stroke: var(--gold); stroke-width: 0.5; stroke-dasharray: 880; stroke-dashoffset: 880; }
+
+        /* --- 2. 메인 페이지 --- */
+        #main-stage { opacity: 0; visibility: hidden; }
+        header {
+            position: fixed; top: 0; width: 100%; padding: 45px 60px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+        }
+        .logo-nav { font-size: 13px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; }
+
+        /* [요청사항] 중앙 배경 연도 - 이전처럼 크고 웅장하게 */
+        .bg-year-container {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: -1; pointer-events: none;
+        }
+        #bg-year-val {
+            font-family: var(--font-serif); 
+            font-size: 22vw; /* 다시 큼직하게 조정 */
+            font-weight: 800;
+            color: #f5f5f5; 
+            line-height: 1; 
+            letter-spacing: -10px;
+            /* 切换时的丝滑过渡 */
+            transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        /* 切换时的状态：稍微缩小并模糊，产生纵深感 */
+        #bg-year-val.switching { 
+            opacity: 0; 
+            filter: blur(30px); 
+            transform: scale(1.1); 
+        }
+
+        /* 가로 스크롤 컨테이너 */
+        .horizontal-scroller { display: flex; width: fit-content; height: 100vh; }
+        .slide {
+            width: 100vw; height: 100vh; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; padding: 0 10vw;
+        }
+        .content-box { display: flex; align-items: center; gap: 8vw; max-width: 1600px; width: 100%; }
+        .text-side { flex: 0 0 420px; opacity: 0; transform: translateY(30px); }
+        .red-label { color: var(--brand-red); font-size: 11px; font-weight: 600; letter-spacing: 3px; margin-bottom: 15px; display: block; }
+        .title { font-size: 2.8rem; font-weight: 700; margin-bottom: 30px; font-family: var(--font-serif); word-break: keep-all; line-height: 1.3; }
+        .desc { font-size: 16px; line-height: 1.9; color: #666; font-weight: 300; word-break: keep-all; }
+        
+        .img-side { flex: 1; height: 65vh; position: relative; overflow: hidden; clip-path: inset(0 100% 0 0); }
+        .img-side img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.15); }
+
+        .footer-nav {
+            position: fixed; bottom: 45px; left: 60px; right: 60px;
+            display: flex; align-items: center; z-index: 1000;
+        }
+        .progress-rail { flex: 1; height: 1px; background: #eee; margin: 0 40px; position: relative; }
+        .progress-bar { position: absolute; left: 0; top: -0.5px; height: 2px; background: var(--brand-red); width: 0%; }
+    </style>
+</head>
+<body>
+
+    <div id="intro-layer">
+        <div class="intro-content">
+            <svg class="loader-svg" viewBox="0 0 280 280">
+                <circle class="loader-circle" cx="140" cy="140" r="135"></circle>
+            </svg>
+            <div id="intro-logo">DAEHO</div>
+        </div>
+    </div>
+
+    <div id="main-stage">
+        <header>
+            <div class="logo-nav">CHRONICLE</div>
+            <div class="logo-nav" style="font-weight: 800; letter-spacing: 8px;">DAEHO</div>
+            <div class="logo-nav">EXPLORE</div>
+        </header>
+        
+        <div class="bg-year-container">
+            <div id="bg-year-val">1994</div>
+        </div>
+
+        <div class="horizontal-scroller" id="scroller">
+            <section class="slide" data-year="1994">
+                <div class="content-box">
+                    <div class="text-side">
+                        <span class="red-label">HERITAGE</span>
+                        <h2 class="title">첫 번째 걸음</h2>
+                        <p class="desc">1994년, 완벽을 향한 DAEHO의 집념이 담긴 첫 번째 컬렉션이 세상에 공개되었습니다.</p>
+                    </div>
+                    <div class="img-side"><img src="https://images.unsplash.com/photo-1509048191080-d2984bad6ad5?q=80&w=1500"></div>
+                </div>
+            </section>
+
+            <section class="slide" data-year="1994">
+                <div class="content-box">
+                    <div class="text-side">
+                        <span class="red-label">CRAFTSMANSHIP</span>
+                        <h2 class="title">변치 않는 가치</h2>
+                        <p class="desc">시간은 흐르지만, 우리가 추구하는 정밀함의 본질은 결코 변하지 않습니다.</p>
+                    </div>
+                    <div class="img-side"><img src="https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?q=80&w=1500"></div>
+                </div>
+            </section>
+
+            <section class="slide" data-year="2012">
+                <div class="content-box">
+                    <div class="text-side">
+                        <span class="red-label">INNOVATION</span>
+                        <h2 class="title">기술의 비상</h2>
+                        <p class="desc">2012년, 새로운 이스케이프먼트 시스템 개발을 통해 기계식 시계의 한계를 다시 한번 뛰어넘었습니다.</p>
+                    </div>
+                    <div class="img-side"><img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=1500"></div>
+                </div>
+            </section>
+
+            <section class="slide" data-year="2026">
+                <div class="content-box">
+                    <div class="text-side">
+                        <span class="red-label">FUTURE</span>
+                        <h2 class="title">미래를 향한 박동</h2>
+                        <p class="desc">이제 DAEHO는 다음 세대를 위한 서사를 준비합니다. 여정은 멈추지 않습니다.</p>
+                    </div>
+                    <div class="img-side"><img src="https://images.unsplash.com/photo-1509048191080-d2984bad6ad5?q=80&w=1500"></div>
+                </div>
+            </section>
+        </div>
+
+        <div class="footer-nav">
+            <div class="progress-rail"><div class="progress-bar" id="pg-bar"></div></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.22/bundled/lenis.min.js"></script>
+
+    <script>
+        const introTl = gsap.timeline({ onComplete: () => { document.body.style.overflow = "auto"; initScroll(); } });
+        introTl.to(".loader-circle", { strokeDashoffset: 0, duration: 2 })
+               .to("#intro-logo", { opacity: 1, filter: "blur(0px)", duration: 1.5 }, "-=1")
+               .to("#intro-layer", { clipPath: "circle(0% at 50% 50%)", duration: 1.5, ease: "expo.inOut" }, "+=0.3")
+               .to("#main-stage", { autoAlpha: 1, duration: 1 }, "-=1");
+
+        function initScroll() {
+            const lenis = new Lenis({ lerp: 0.07 });
+            function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+            requestAnimationFrame(raf);
+
+            gsap.registerPlugin(ScrollTrigger);
+            const scroller = document.querySelector("#scroller");
+            const slides = gsap.utils.toArray(".slide");
+
+            let scrollTween = gsap.to(scroller, {
+                x: () => -(scroller.scrollWidth - document.documentElement.clientWidth),
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#main-stage", pin: true, scrub: 1.2,
+                    end: () => "+=" + scroller.scrollWidth,
+                    onUpdate: (self) => { gsap.to("#pg-bar", { width: self.progress * 100 + "%", duration: 0.1 }); }
+                }
+            });
+
+            slides.forEach((slide) => {
+                const targetYear = slide.getAttribute("data-year");
+                const text = slide.querySelector(".text-side");
+                const img = slide.querySelector(".img-side");
+
+                // 内容动画
+                gsap.to(text, { opacity: 1, y: 0, scrollTrigger: { trigger: slide, containerAnimation: scrollTween, start: "left 75%", toggleActions: "play none none reverse" } });
+                gsap.to(img, { clipPath: "inset(0 0% 0 0)", scrollTrigger: { trigger: slide, containerAnimation: scrollTween, start: "left 65%", toggleActions: "play none none reverse" } });
+
+                // [핵심] 연도 전환 로직
+                ScrollTrigger.create({
+                    trigger: slide,
+                    containerAnimation: scrollTween,
+                    start: "left center",
+                    onEnter: () => updateYearStage(targetYear),
+                    onLeaveBack: () => updateYearStage(targetYear)
+                });
+            });
+        }
+
+        let lastYear = "";
+        function updateYearStage(year) {
+            if (year === lastYear) return;
+            const yearEl = document.getElementById("bg-year-val");
+            
+            // 切换效果：先消失，换数字，再显现
+            yearEl.classList.add("switching");
+            
+            setTimeout(() => {
+                yearEl.innerText = year;
+                yearEl.classList.remove("switching");
+            }, 600); // 这里的延迟要配合 CSS 的 transition 时间
+
+            lastYear = year;
+        }
+    </script>
+</body>
+</html>
