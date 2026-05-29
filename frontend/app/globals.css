@@ -3041,6 +3041,798 @@ html.site-theme-night .chronicle-page .chronicle-intro circle,
   color: rgba(255, 255, 255, 0.84);
 }
 
+.golf-page {
+  --golf-blue: #174f8e;
+  --golf-blue-rgb: 23, 79, 142;
+  --golf-ink: #102744;
+  --golf-muted: rgba(21, 68, 120, 0.68);
+  --golf-line: rgba(44, 96, 153, 0.18);
+  --golf-panel: rgba(255, 255, 255, 0.68);
+  --golf-rose: #b88468;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(ellipse at 78% 8%, rgba(255, 255, 255, 0.96), transparent 36%),
+    radial-gradient(ellipse at 12% 72%, rgba(180, 211, 239, 0.46), transparent 34%),
+    linear-gradient(180deg, #f6fbff 0%, #e9f3fb 26%, #f8fbff 54%, #ffffff 100%);
+  color: var(--golf-ink);
+  font-family: Inter, Pretendard, "Noto Sans KR", Arial, sans-serif;
+  isolation: isolate;
+}
+
+.golf-page .hero-header {
+  z-index: 60;
+}
+
+.golf-page .hero-header:not(.is-header-hidden) .site-links,
+.golf-page .hero-header:not(.is-header-hidden) .hero-actions,
+.golf-page .hero-header:not(.is-header-hidden) .main-nav {
+  color: rgba(20, 58, 102, 0.82);
+  opacity: 1;
+  filter: none;
+  transform: none;
+  text-shadow: none;
+}
+
+.golf-page .hero-header:not(.is-header-hidden) .hero-logo-target {
+  color: var(--golf-blue);
+  opacity: 1;
+  filter: none;
+  transform: none;
+  text-shadow: 0 14px 40px rgba(var(--golf-blue-rgb), 0.16);
+}
+
+.golf-page .main-nav a.is-active,
+.golf-page .main-nav a:not(.is-active):hover {
+  color: var(--golf-blue);
+}
+
+.golf-page .category-mask-active {
+  background: rgba(var(--golf-blue-rgb), 0.13);
+}
+
+.golf-page .category-mask-hover {
+  background: rgba(var(--golf-blue-rgb), 0.08);
+}
+
+.golf-page .icon-button {
+  border: 1px solid rgba(var(--golf-blue-rgb), 0.18);
+  background: rgba(255, 255, 255, 0.68);
+  color: var(--golf-blue);
+  box-shadow: 0 12px 30px rgba(37, 82, 136, 0.12);
+}
+
+.golf-page .language-menu,
+.golf-page .branch-nav {
+  border-color: rgba(var(--golf-blue-rgb), 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 56px rgba(50, 91, 135, 0.18);
+}
+
+.golf-page .language-menu a,
+.golf-page .branch-nav a {
+  color: rgba(17, 59, 110, 0.72);
+}
+
+.golf-page .language-menu a.is-active,
+.golf-page .language-menu a:hover,
+.golf-page .branch-nav a.is-active,
+.golf-page .branch-nav a:hover {
+  background: rgba(var(--golf-blue-rgb), 0.12);
+  color: var(--golf-blue);
+}
+
+.golf-reveal {
+  opacity: 0;
+  filter: blur(12px);
+  transform: translate3d(0, 26px, 0);
+  transition:
+    opacity 900ms var(--ease-film),
+    filter 900ms var(--ease-film),
+    transform 900ms var(--ease-film);
+}
+
+.golf-reveal.is-visible {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+.golf-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(320px, 0.78fr) minmax(520px, 1.35fr);
+  align-items: center;
+  min-height: 100svh;
+  padding: 150px min(8vw, 124px) 72px;
+  overflow: hidden;
+}
+
+.golf-hero::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 38%;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(229, 242, 252, 0.54) 28%, rgba(240, 247, 252, 0.92) 100%),
+    url("/images/golf/golf-day-hero-cliff.jpg") center bottom / cover no-repeat;
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.golf-section-index {
+  position: absolute;
+  left: 36px;
+  top: 24%;
+  bottom: 20%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  gap: 14px;
+  color: rgba(var(--golf-blue-rgb), 0.68);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  z-index: 2;
+}
+
+.golf-section-index i {
+  width: 1px;
+  background: rgba(var(--golf-blue-rgb), 0.22);
+}
+
+.golf-hero-copy,
+.golf-hero-visual {
+  position: relative;
+  z-index: 2;
+}
+
+.golf-hero-copy {
+  max-width: 420px;
+  align-self: center;
+}
+
+.golf-hero-copy > span,
+.golf-detail-copy > span,
+.golf-crafted-copy > span,
+.golf-centered-heading > span,
+.golf-statement-copy > span,
+.golf-package-copy > span,
+.golf-section-label {
+  color: rgba(var(--golf-blue-rgb), 0.68);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.golf-hero h1,
+.golf-detail-copy h2,
+.golf-centered-heading h2,
+.golf-crafted-copy h2,
+.golf-statement-copy h2,
+.golf-package-copy h2 {
+  margin: 20px 0 22px;
+  color: var(--golf-blue);
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  line-height: 0.98;
+}
+
+.golf-hero h1 {
+  font-size: 76px;
+}
+
+.golf-hero p,
+.golf-detail-copy p,
+.golf-centered-heading p,
+.golf-crafted-copy p,
+.golf-statement-copy p,
+.golf-package-copy p {
+  margin: 0;
+  color: var(--golf-muted);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.golf-button {
+  width: fit-content;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 32px;
+  padding: 0 18px;
+  border: 1px solid rgba(var(--golf-blue-rgb), 0.26);
+  color: var(--golf-blue);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition:
+    border-color 220ms ease,
+    background 220ms ease,
+    transform 220ms var(--ease-film);
+}
+
+.golf-button svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.6;
+}
+
+.golf-button:hover {
+  background: rgba(var(--golf-blue-rgb), 0.08);
+  border-color: rgba(var(--golf-blue-rgb), 0.44);
+  transform: translateY(-1px);
+}
+
+.golf-hero-visual {
+  justify-self: end;
+  width: min(100%, 980px);
+  margin-right: -4vw;
+}
+
+.golf-hero-visual img {
+  width: 100%;
+  display: block;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 34px 60px rgba(102, 137, 170, 0.2));
+  transform: none;
+}
+
+.golf-detail-section {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.48fr) minmax(0, 1fr);
+  gap: min(6vw, 84px);
+  padding: 96px min(8vw, 124px) 112px;
+  background:
+    radial-gradient(ellipse at 4% 92%, rgba(190, 217, 239, 0.48), transparent 30%),
+    linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+}
+
+.golf-section-label {
+  position: absolute;
+  left: min(5vw, 72px);
+  top: 38px;
+}
+
+.golf-detail-copy {
+  align-self: center;
+}
+
+.golf-detail-copy h2,
+.golf-crafted-copy h2,
+.golf-package-copy h2 {
+  font-size: 58px;
+}
+
+.golf-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.golf-detail-card {
+  min-width: 0;
+}
+
+.golf-detail-image {
+  aspect-ratio: 0.72 / 1;
+  overflow: hidden;
+  background: #eaf3fb;
+}
+
+.golf-detail-image img {
+  width: 100%;
+  height: 118%;
+  display: block;
+  object-fit: cover;
+  object-position: top center;
+  transition: transform 780ms var(--ease-film), filter 260ms ease;
+}
+
+.golf-detail-card:hover img {
+  transform: scale(1.045);
+}
+
+.golf-detail-card span,
+.golf-detail-card h3,
+.golf-color-card strong,
+.golf-spec-strip span,
+.golf-package-notes span {
+  color: var(--golf-blue);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.golf-detail-card span {
+  display: block;
+  margin-top: 16px;
+}
+
+.golf-detail-card h3 {
+  margin: 8px 0;
+}
+
+.golf-detail-card p,
+.golf-color-card small,
+.golf-package-notes p {
+  margin: 0;
+  color: var(--golf-muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.golf-colors {
+  position: relative;
+  padding: 98px min(8vw, 124px) 104px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(216, 232, 246, 0.78), transparent 34%),
+    linear-gradient(180deg, #eef6ff 0%, #f9fcff 100%);
+  text-align: center;
+}
+
+.golf-centered-heading {
+  max-width: 720px;
+  margin: 0 auto 54px;
+}
+
+.golf-centered-heading h2 {
+  margin-bottom: 14px;
+  font-size: 48px;
+  letter-spacing: 0.18em;
+}
+
+.golf-color-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.golf-color-card {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  padding: 0 0 20px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  transition:
+    border-color 220ms ease,
+    background 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms var(--ease-film);
+}
+
+.golf-color-card.is-active,
+.golf-color-card:hover {
+  border-color: rgba(var(--golf-blue-rgb), 0.2);
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: 0 22px 70px rgba(72, 112, 156, 0.12);
+  transform: translateY(-4px);
+}
+
+.golf-color-card img {
+  width: 100%;
+  aspect-ratio: 0.86 / 1;
+  display: block;
+  object-fit: cover;
+  object-position: top center;
+  background: #eaf3fb;
+}
+
+.golf-swatch {
+  width: 14px;
+  height: 14px;
+  margin-top: 7px;
+  border: 1px solid rgba(var(--golf-blue-rgb), 0.22);
+  border-radius: 999px;
+}
+
+.golf-color-card small {
+  max-width: 18em;
+}
+
+.golf-color-selected {
+  width: fit-content;
+  display: inline-grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  gap: 14px;
+  margin-top: 42px;
+  padding: 13px 18px;
+  border: 1px solid rgba(var(--golf-blue-rgb), 0.18);
+  background: rgba(255, 255, 255, 0.56);
+  color: var(--golf-muted);
+}
+
+.golf-color-selected span {
+  color: var(--golf-blue);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.golf-color-selected p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.golf-color-selected i {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+}
+
+.golf-crafted {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.44fr) minmax(260px, 0.52fr) minmax(480px, 1.08fr);
+  align-items: end;
+  gap: 28px;
+  padding: 98px min(8vw, 124px) 0;
+  background:
+    radial-gradient(ellipse at 82% 18%, rgba(187, 216, 240, 0.5), transparent 32%),
+    linear-gradient(180deg, #ffffff 0%, #edf6ff 100%);
+}
+
+.golf-crafted-copy {
+  align-self: start;
+  padding-top: 16px;
+}
+
+.golf-crafted-copy small {
+  display: block;
+  margin-top: 42px;
+  color: rgba(var(--golf-blue-rgb), 0.56);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.golf-crafted-detail {
+  aspect-ratio: 0.86 / 1;
+  overflow: hidden;
+  background: #dce9f3;
+  box-shadow: 0 24px 80px rgba(55, 84, 112, 0.12);
+}
+
+.golf-crafted-detail img,
+.golf-crafted-main img,
+.golf-statement-image img,
+.golf-statement-product,
+.golf-package-main img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.golf-crafted-main {
+  position: relative;
+  align-self: stretch;
+  min-height: 560px;
+  margin: 0;
+  overflow: hidden;
+  background: #dce9f3;
+}
+
+.golf-crafted-main figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: 96px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 0 34px;
+  background: rgba(218, 235, 249, 0.9);
+  color: var(--golf-blue);
+}
+
+.golf-crafted-main figcaption svg {
+  width: 42px;
+  height: 42px;
+  stroke-width: 1.35;
+}
+
+.golf-crafted-main figcaption span {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.golf-statement {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(420px, 0.96fr) minmax(360px, 0.88fr);
+  gap: min(7vw, 92px);
+  align-items: center;
+  min-height: 960px;
+  padding: 96px min(8vw, 124px) 180px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 68% 24%, rgba(59, 109, 153, 0.42), transparent 36%),
+    linear-gradient(135deg, #07121d 0%, #0e2a40 52%, #06101a 100%);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.golf-statement-image {
+  align-self: stretch;
+  min-height: 700px;
+  overflow: hidden;
+}
+
+.golf-statement-image img {
+  object-position: center top;
+}
+
+.golf-statement-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 560px;
+}
+
+.golf-statement-copy > span {
+  color: rgba(207, 228, 246, 0.72);
+}
+
+.golf-statement-copy h2 {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 62px;
+  line-height: 1.08;
+}
+
+.golf-statement-copy h2::first-line {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.golf-statement-copy p {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.golf-button.is-dark {
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.golf-button.is-dark:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.38);
+}
+
+.golf-statement-product {
+  position: absolute;
+  right: min(8vw, 124px);
+  bottom: 82px;
+  width: min(460px, 32vw);
+  height: auto;
+  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.32));
+}
+
+.golf-spec-strip {
+  position: absolute;
+  left: min(8vw, 124px);
+  right: min(8vw, 124px);
+  bottom: 42px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid rgba(173, 207, 236, 0.2);
+  background: rgba(7, 22, 35, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+.golf-spec-strip span {
+  display: grid;
+  gap: 7px;
+  justify-items: center;
+  padding: 24px 12px;
+  color: rgba(210, 232, 250, 0.76);
+  border-right: 1px solid rgba(173, 207, 236, 0.16);
+}
+
+.golf-spec-strip span:last-child {
+  border-right: 0;
+}
+
+.golf-spec-strip i {
+  font-style: normal;
+  opacity: 0.62;
+}
+
+.golf-package {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.52fr) minmax(520px, 1fr);
+  gap: min(7vw, 94px);
+  padding: 100px min(8vw, 124px) 78px;
+  background:
+    radial-gradient(ellipse at 76% 6%, rgba(184, 214, 240, 0.52), transparent 34%),
+    linear-gradient(180deg, #f6fbff 0%, #e9f4ff 100%);
+}
+
+.golf-package-copy {
+  align-self: center;
+}
+
+.golf-package-badge {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 42px;
+  color: var(--golf-blue);
+}
+
+.golf-package-badge svg {
+  width: 42px;
+  height: 42px;
+  stroke-width: 1.45;
+}
+
+.golf-package-badge span {
+  max-width: 22em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.golf-package-main {
+  min-height: 440px;
+  margin: 0;
+  overflow: hidden;
+  box-shadow: 0 26px 80px rgba(52, 88, 125, 0.14);
+}
+
+.golf-package-main img {
+  object-position: center;
+}
+
+.golf-package-notes {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 18px;
+  border-top: 1px solid var(--golf-line);
+}
+
+.golf-package-notes article {
+  padding: 28px 24px 0;
+}
+
+.golf-package-notes svg {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 14px;
+  color: var(--golf-blue);
+  stroke-width: 1.45;
+}
+
+.golf-package-notes span {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.golf-page.is-night-theme {
+  --golf-blue: #d9b46c;
+  --golf-blue-rgb: 217, 180, 108;
+  --golf-ink: rgba(255, 255, 255, 0.88);
+  --golf-muted: rgba(255, 255, 255, 0.62);
+  --golf-line: rgba(217, 180, 108, 0.18);
+  --golf-panel: rgba(7, 10, 14, 0.74);
+  background:
+    radial-gradient(ellipse at 72% 8%, rgba(170, 132, 73, 0.14), transparent 34%),
+    radial-gradient(ellipse at 12% 72%, rgba(37, 83, 112, 0.22), transparent 34%),
+    linear-gradient(180deg, #030507 0%, #0a1118 36%, #04070a 100%);
+}
+
+.golf-page.is-night-theme .hero-header:not(.is-header-hidden) .site-links,
+.golf-page.is-night-theme .hero-header:not(.is-header-hidden) .hero-actions,
+.golf-page.is-night-theme .hero-header:not(.is-header-hidden) .main-nav {
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.68);
+}
+
+.golf-page.is-night-theme .hero-header:not(.is-header-hidden) .hero-logo-target {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 24px rgba(0, 0, 0, 0.72);
+}
+
+.golf-page.is-night-theme .category-mask-active {
+  background: rgba(217, 180, 108, 0.18);
+}
+
+.golf-page.is-night-theme .category-mask-hover {
+  background: rgba(217, 180, 108, 0.09);
+}
+
+.golf-page.is-night-theme .icon-button {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(5, 6, 9, 0.56);
+  color: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
+}
+
+.golf-page.is-night-theme .language-menu,
+.golf-page.is-night-theme .branch-nav {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(5, 6, 9, 0.86);
+  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.42);
+}
+
+.golf-page.is-night-theme .language-menu a,
+.golf-page.is-night-theme .branch-nav a {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.golf-page.is-night-theme .language-menu a.is-active,
+.golf-page.is-night-theme .language-menu a:hover,
+.golf-page.is-night-theme .branch-nav a.is-active,
+.golf-page.is-night-theme .branch-nav a:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.golf-page.is-night-theme .golf-hero::before {
+  opacity: 0;
+}
+
+.golf-page.is-night-theme .golf-hero-visual img {
+  mix-blend-mode: normal;
+  filter: drop-shadow(0 38px 68px rgba(0, 0, 0, 0.48));
+}
+
+.golf-page.is-night-theme .golf-detail-section,
+.golf-page.is-night-theme .golf-colors,
+.golf-page.is-night-theme .golf-crafted,
+.golf-page.is-night-theme .golf-package {
+  background:
+    radial-gradient(ellipse at 76% 14%, rgba(174, 132, 71, 0.12), transparent 36%),
+    linear-gradient(180deg, #05080c 0%, #0a121a 100%);
+}
+
+.golf-page.is-night-theme .golf-detail-image,
+.golf-page.is-night-theme .golf-color-card img,
+.golf-page.is-night-theme .golf-crafted-detail,
+.golf-page.is-night-theme .golf-crafted-main,
+.golf-page.is-night-theme .golf-package-main {
+  background: #05080c;
+  border: 1px solid rgba(217, 180, 108, 0.14);
+}
+
+.golf-page.is-night-theme .golf-detail-image img,
+.golf-page.is-night-theme .golf-color-card img,
+.golf-page.is-night-theme .golf-crafted-detail img,
+.golf-page.is-night-theme .golf-crafted-main img,
+.golf-page.is-night-theme .golf-package-main img {
+  filter: brightness(0.78) saturate(0.9) contrast(1.04);
+}
+
+.golf-page.is-night-theme .golf-color-card.is-active,
+.golf-page.is-night-theme .golf-color-card:hover,
+.golf-page.is-night-theme .golf-color-selected {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(217, 180, 108, 0.24);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.26);
+}
+
+.golf-page.is-night-theme .golf-crafted-main figcaption {
+  background: rgba(6, 12, 18, 0.84);
+}
+
+.golf-page.is-night-theme .golf-package-notes p {
+  color: rgba(255, 255, 255, 0.58);
+}
+
 .credibility-page {
   --credibility-progress: 0;
   --credibility-tone: 0;
@@ -4677,6 +5469,33 @@ html.site-theme-night .chronicle-page .chronicle-intro circle,
 }
 
 @media (max-width: 1060px) {
+  .golf-hero,
+  .golf-detail-section,
+  .golf-crafted,
+  .golf-statement,
+  .golf-package {
+    grid-template-columns: 1fr;
+  }
+
+  .golf-hero-visual {
+    justify-self: center;
+    margin: 0;
+  }
+
+  .golf-detail-grid,
+  .golf-color-grid,
+  .golf-package-notes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .golf-statement-product {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: min(560px, 78vw);
+    margin-left: auto;
+  }
+
   .news-featured {
     grid-template-columns: 1fr;
   }
@@ -5138,6 +5957,245 @@ html.site-theme-night .chronicle-page .chronicle-intro circle,
 
   .news-page.is-night-theme .mobile-menu-label {
     color: rgba(229, 191, 96, 0.86);
+  }
+
+  .golf-page {
+    background:
+      radial-gradient(ellipse at 70% 4%, rgba(255, 255, 255, 0.95), transparent 28%),
+      linear-gradient(180deg, #f7fbff 0%, #edf6ff 44%, #ffffff 100%);
+  }
+
+  .golf-hero {
+    min-height: 100dvh;
+    padding: 130px 18px 74px;
+    gap: 26px;
+  }
+
+  .golf-section-index {
+    display: none;
+  }
+
+  .golf-hero h1 {
+    margin: 16px 0 18px;
+    font-size: 52px;
+  }
+
+  .golf-hero-copy {
+    max-width: 330px;
+  }
+
+  .golf-hero p,
+  .golf-detail-copy p,
+  .golf-centered-heading p,
+  .golf-crafted-copy p,
+  .golf-statement-copy p,
+  .golf-package-copy p {
+    font-size: 14px;
+  }
+
+  .golf-hero-visual img {
+    transform: scale(1.08);
+    transform-origin: center;
+  }
+
+  .golf-detail-section,
+  .golf-colors,
+  .golf-crafted,
+  .golf-package {
+    padding: 72px 18px 80px;
+  }
+
+  .golf-section-label {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin-bottom: 28px;
+  }
+
+  .golf-detail-copy h2,
+  .golf-crafted-copy h2,
+  .golf-package-copy h2 {
+    font-size: 42px;
+  }
+
+  .golf-detail-grid,
+  .golf-color-grid,
+  .golf-package-notes {
+    grid-template-columns: 1fr;
+  }
+
+  .golf-detail-grid {
+    gap: 24px;
+  }
+
+  .golf-detail-image {
+    aspect-ratio: 1 / 1;
+  }
+
+  .golf-detail-image img {
+    height: 130%;
+  }
+
+  .golf-centered-heading {
+    margin-bottom: 34px;
+    text-align: left;
+  }
+
+  .golf-centered-heading h2 {
+    font-size: 34px;
+    letter-spacing: 0.1em;
+  }
+
+  .golf-color-card {
+    padding-bottom: 18px;
+  }
+
+  .golf-color-card img {
+    aspect-ratio: 1.14 / 1;
+  }
+
+  .golf-color-selected {
+    width: 100%;
+    grid-template-columns: auto 1fr auto;
+    text-align: left;
+  }
+
+  .golf-crafted {
+    gap: 22px;
+  }
+
+  .golf-crafted-copy small {
+    margin-top: 22px;
+  }
+
+  .golf-crafted-main {
+    min-height: 360px;
+  }
+
+  .golf-crafted-main figcaption {
+    min-height: 74px;
+    padding: 0 18px;
+  }
+
+  .golf-crafted-main figcaption span {
+    font-size: 13px;
+  }
+
+  .golf-statement {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding: 76px 18px 150px;
+    gap: 30px;
+  }
+
+  .golf-statement-image {
+    min-height: 460px;
+  }
+
+  .golf-statement-copy h2 {
+    font-size: 42px;
+  }
+
+  .golf-statement-product {
+    width: 100%;
+    margin: 0;
+  }
+
+  .golf-spec-strip {
+    left: 18px;
+    right: 18px;
+    bottom: 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .golf-spec-strip span {
+    padding: 16px 10px;
+  }
+
+  .golf-package {
+    gap: 28px;
+    padding-bottom: 116px;
+  }
+
+  .golf-package-main {
+    min-height: 270px;
+  }
+
+  .golf-package-badge {
+    margin-top: 28px;
+  }
+
+  .golf-package-notes {
+    gap: 0;
+    margin-top: 0;
+  }
+
+  .golf-package-notes article {
+    padding: 24px 0 0;
+  }
+
+  .golf-page .mobile-menu-trigger,
+  .golf-page .mobile-theme-switch {
+    border-color: rgba(31, 91, 165, 0.18);
+    background: rgba(255, 255, 255, 0.8);
+    color: #174a8c;
+    box-shadow: 0 12px 30px rgba(37, 82, 136, 0.12);
+  }
+
+  .golf-page .mobile-menu-panel {
+    border-color: rgba(31, 91, 165, 0.18);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 20px 70px rgba(50, 91, 135, 0.18);
+  }
+
+  .golf-page .mobile-menu-panel a {
+    color: rgba(17, 59, 110, 0.76);
+  }
+
+  .golf-page .mobile-menu-panel a.mobile-branch-link {
+    border-left-color: rgba(38, 105, 184, 0.24);
+    color: rgba(17, 59, 110, 0.68);
+  }
+
+  .golf-page .mobile-menu-panel a.is-active {
+    background: rgba(37, 104, 184, 0.12);
+    color: #0d4488;
+  }
+
+  .golf-page .mobile-menu-label {
+    color: #174a8c;
+  }
+
+  .golf-page.is-night-theme .mobile-menu-trigger,
+  .golf-page.is-night-theme .mobile-theme-switch {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(5, 6, 9, 0.66);
+    color: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .golf-page.is-night-theme .mobile-menu-panel {
+    border-color: rgba(255, 255, 255, 0.16);
+    background: rgba(5, 6, 9, 0.92);
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.48);
+  }
+
+  .golf-page.is-night-theme .mobile-menu-panel a {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .golf-page.is-night-theme .mobile-menu-panel a.mobile-branch-link {
+    border-left-color: rgba(217, 180, 108, 0.3);
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .golf-page.is-night-theme .mobile-menu-panel a.is-active {
+    background: rgba(217, 180, 108, 0.16);
+    color: #d9b46c;
+  }
+
+  .golf-page.is-night-theme .mobile-menu-label {
+    color: rgba(217, 180, 108, 0.88);
   }
 
   .credibility-page {

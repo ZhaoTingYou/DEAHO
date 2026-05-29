@@ -183,6 +183,19 @@ GOLF 是独立产品线。
 - crafted to last
 - more than a bracelet, a statement
 
+当前实现包括：
+
+- `/golf` 页面。
+- 全站统一顶部栏。
+- day / night 两套主题。
+- hero 产品主视觉。
+- design detail 四卡。
+- shaft color 可点击色卡。
+- crafted to last。
+- more than a bracelet, a statement。
+- packaged with purpose。
+- Mobile 单列适配和全站 mobile menu。
+
 ---
 
 ## 待补充素材

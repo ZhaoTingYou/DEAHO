@@ -246,13 +246,19 @@ Collection 是代表项目和产品成果展示。
 
 ### 6. GOLF
 
-GOLF 是独立产品线。
+GOLF 是独立产品线，当前已完成前端页面 `/golf`。
 
 前端重点：
 
-- 黑金产品 campaign。
-- Golf bracelet 主视觉。
-- shaft color 展示。
+- 顶部栏复用 `SiteHeader`，activeSection 为 `GOLF`。
+- 页面实现文件：`frontend/components/golf/GolfPage.tsx`。
+- 数据文件：`frontend/data/golf.ts`。
+- Golf bracelet 主视觉和 campaign section。
+- 4 个 detail cards：BALL TEXTURE / CLUB FACE / PRECISE LINE / PERFECT CURVE。
+- shaft color 展示，包含 BLACK / WHITE / BURGUNDY / NAVY 四个可点击色卡。
+- crafted to last、statement、packaging 三段产品叙事。
+- Day mode 使用浅色冰蓝 golf campaign；Night mode 使用深色产品 campaign。
+- Mobile 改为单列叙事，并保持全站 mobile menu。
 - 运动精品感。
 
 ### 7. NEWS

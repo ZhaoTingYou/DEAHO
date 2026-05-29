@@ -419,13 +419,24 @@ NEWS 是品牌内容和文章列表页，整体需要比主产品页更轻、更
 
 ## GOLF `/golf`
 
-参考：`GOLF PLAN 1.png`
+参考：`/Users/tingyouzhao/Desktop/戒指/素材/Group 42.png`
 
 GOLF 是独立产品线页面，视觉更偏黑金、运动、收藏、精品配饰。
 
+当前实现：
+
+- 路由：`/golf`
+- 实现文件：`frontend/components/golf/GolfPage.tsx`
+- 数据文件：`frontend/data/golf.ts`
+- 顶部栏复用 `frontend/components/layout/SiteHeader.tsx`。
+- 支持 day / night 两套主题，并继承全站 `ThemeProvider`。
+- Day mode 参考用户提供的浅色冰蓝 golf campaign 长图。
+- Night mode 使用深色 golf campaign 氛围和 muted gold active 状态。
+- Mobile 使用全站统一 mobile menu，页面改为单列叙事。
+
 ### Section 1 — Hero
 
-- 黑色背景。
+- Day mode 使用冷白 / 浅蓝背景；Night mode 使用深色背景。
 - 左侧：序号、产品类型、竖向大标题。
 - 主标题方向：
   ```text
@@ -435,8 +446,7 @@ GOLF 是独立产品线页面，视觉更偏黑金、运动、收藏、精品配
   ```
 - 右侧：Golf bracelet 大型产品图。
 - CTA：`DISCOVER COLLECTION`。
-- 右侧有播放按钮。
-- 底部保留 scroll indicator。
+- 底部通过 cliff / stone 视觉和 section index 建立纵深。
 
 ### Section 2 — Design in Every Detail
 
@@ -447,7 +457,7 @@ GOLF 是独立产品线页面，视觉更偏黑金、运动、收藏、精品配
   - CLUB FACE
   - PRECISE LINE
   - PERFECT CURVE
-- 支持左右箭头切换。
+- Desktop 使用 4 列细节卡；Mobile 改为单列。
 
 ### Section 3 — Shaft Color
 
@@ -458,13 +468,13 @@ GOLF 是独立产品线页面，视觉更偏黑金、运动、收藏、精品配
   - BURGUNDY
   - NAVY
 - 使用 radio / swatch 控制颜色。
-- 图片切换要慢、有质感。
+- 当前实现为 4 个可点击色卡，active 状态会更新下方 selected color 信息。
 
 ### Section 4 — Crafted to Last
 
 - 展示材质、刻字、细节加工、金属纹理。
 - 可用 1 张大图 + 2 张细节图组合。
-- 左侧有 `WATCH PROCESS` 或视频入口。
+- 当前实现使用左侧标题、中间 engraving detail、右侧主图和 precision caption。
 
 ### Section 5 — More Than a Bracelet, a Statement
 
@@ -479,6 +489,7 @@ GOLF 是独立产品线页面，视觉更偏黑金、运动、收藏、精品配
   - PREMIUM MATERIAL
   - EXQUISITE DETAIL
   - LIMITED EDITION
+- 当前实现改为 packaging purpose 模块：包装主图、brand badge、4 个 packaging notes。
 
 ---
 
