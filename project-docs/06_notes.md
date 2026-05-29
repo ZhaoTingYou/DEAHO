@@ -99,14 +99,17 @@ SPECIALTY 子 category：
 
 ### CHRONICLE
 
-适合讲品牌历史和时间线。
+适合讲品牌历史和时间线。详细页面规格见：`/Users/tingyouzhao/Desktop/deaho官网/project-docs/10_chronicle.md`。
 
-需要后续补充：
+当前已完成基础实现方向：
 
-- 品牌成立年份。
-- 关键里程碑。
-- 代表项目。
-- 老照片 / 图纸 / 制作资料。
+- 独立 opening logo ring。
+- opening 通过 logo blur + opacity、遮罩淡出、页面柔焦浮现完成衔接。
+- Desktop 使用 pinned horizontal timeline。
+- 年份导航固定在 viewport 左侧，不跟随卷轴移动。
+- 四个年份节点对应四个板块：`1994 / 2001 / 2012 / 2026`。
+- 支持 day / night 两套主题，day mode 已统一到 Home 的冷白 / 浅蓝 / 品牌蓝体系。
+- Mobile 改为纵向时间线，并保留固定年份导航。
 
 ### LEGACY
 
@@ -144,7 +147,20 @@ Technique 讲过程，Collection 讲代表项目和产品成果集合。
 
 ### NEWS
 
-当前 NEWS 设计图偏 editorial / magazine。
+当前 NEWS 设计图偏 editorial / magazine。已实现 `/news` 前端页面。
+
+当前实现包括：
+
+- 全站统一顶部栏。
+- day / night 两套主题。
+- blueprint 背景氛围。
+- featured story。
+- 分类筛选。
+- Latest / Oldest 排序切换。
+- 文章卡片 grid。
+- 文章详情页 `/news/[slug]`。
+- 详情页包含大图、文章信息侧栏、正文、quote 和 related stories。
+- Mobile 单列适配和全站 mobile menu。
 
 后续真实内容可以包括：
 
@@ -206,7 +222,7 @@ GOLF 是独立产品线。
 ## 推荐下一步
 
 1. 确认 `02_pages.md` 中的路由是否采用独立子页面，还是先做 anchor section。
-2. 补充 CHRONICLE 的内容素材或确认由设计方向先占位。
+2. 补充 CHRONICLE 的真实历史素材，替换当前占位图。
 3. 确认 LEGACY 三个子 category 是否需要独立页面设计。
 4. 整理图片素材到 `public/images/`。
 5. 按 `05_tech.md` 先搭建 React / Next.js 前端项目骨架。

@@ -18,15 +18,47 @@ function isSiteTheme(value: string | null | undefined): value is SiteTheme {
   return value === "day" || value === "night";
 }
 
+function getCookieTheme(): SiteTheme | null {
+  const cookieTheme = document.cookie
+    .split("; ")
+    .find((item) => item.startsWith(`${storageKey}=`))
+    ?.split("=")[1];
+
+  return isSiteTheme(cookieTheme) ? cookieTheme : null;
+}
+
+function getPageTone(theme: SiteTheme) {
+  const path = window.location.pathname;
+
+  if (path === "/day") return "light";
+  if ((path === "/" || path === "/chronicle" || path.startsWith("/news")) && theme === "day") return "light";
+  if (path.startsWith("/legacy/credibility") && theme === "day") return "light";
+  return "dark";
+}
+
 function applyTheme(theme: SiteTheme) {
-  document.documentElement.dataset.siteTheme = theme;
-  document.documentElement.classList.toggle("site-theme-day", theme === "day");
-  document.documentElement.classList.toggle("site-theme-night", theme === "night");
+  const root = document.documentElement;
+  const pageTone = getPageTone(theme);
+
+  root.dataset.siteTheme = theme;
+  root.classList.toggle("site-theme-day", theme === "day");
+  root.classList.toggle("site-theme-night", theme === "night");
+  root.classList.toggle("page-tone-light", pageTone === "light");
+  root.classList.toggle("page-tone-dark", pageTone === "dark");
 }
 
 function persistTheme(theme: SiteTheme) {
-  window.localStorage.setItem(storageKey, theme);
-  document.cookie = `${storageKey}=${theme}; Path=/; Max-Age=31536000; SameSite=Lax`;
+  try {
+    window.localStorage?.setItem(storageKey, theme);
+  } catch {
+    // Cookie fallback keeps theme persistence working in restricted WebViews.
+  }
+
+  try {
+    document.cookie = `${storageKey}=${theme}; Path=/; Max-Age=31536000; SameSite=Lax`;
+  } catch {
+    // Theme still applies for the current page even if persistence is blocked.
+  }
 }
 
 function getStoredTheme(fallback: SiteTheme): SiteTheme {
@@ -35,8 +67,14 @@ function getStoredTheme(fallback: SiteTheme): SiteTheme {
   const routeTheme = window.location.pathname === "/day" ? "day" : null;
   if (routeTheme) return routeTheme;
 
-  const storedTheme = window.localStorage.getItem(storageKey);
-  return isSiteTheme(storedTheme) ? storedTheme : fallback;
+  try {
+    const storedTheme = window.localStorage?.getItem(storageKey);
+    if (isSiteTheme(storedTheme)) return storedTheme;
+  } catch {
+    return getCookieTheme() ?? fallback;
+  }
+
+  return getCookieTheme() ?? fallback;
 }
 
 export function ThemeProvider({ children, initialTheme = "night" }: { children: ReactNode; initialTheme?: SiteTheme }) {

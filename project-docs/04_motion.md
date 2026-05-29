@@ -213,10 +213,19 @@ Recent Projects：
 
 ### CHRONICLE
 
-- 时间线节点随滚动逐段出现。
-- 年份数字可以从低透明到清晰。
-- 历史图片使用慢速 mask reveal。
-- 不要做密集快速时间线动画。
+详细页面规格见：`/Users/tingyouzhao/Desktop/deaho官网/project-docs/10_chronicle.md`。
+
+CHRONICLE 使用独立 opening 与横向卷轴时间线，不复用 Home 的 logo 飞行动画。
+
+- Opening 先画出较大的圆形 logo ring，再显示与 Home 顶部栏一致字体的 `DAEHO`。
+- logo 清晰后，不使用硬切或突兀发光消失；采用柔焦透明交叉溶解。
+- 后面的 timeline 内容提前在底层低亮度、柔焦显现。
+- logo 与圆圈单独慢慢 blur + fade，外层 day / night 遮罩逐渐变薄。
+- 页面内容最终从柔焦恢复清晰，形成自然的景深拉焦感。
+- Desktop 使用 pinned horizontal timeline，scroll progress 驱动横向移动。
+- 年份导航和底部进度线固定在 viewport 层，不放进带 transform / filter 的卷轴容器内。
+- Mobile 降低 pinned 感，改成纵向板块滚动，年份导航固定在左下方。
+- Night mode 使用 dark archive + muted gold；Day mode 使用 Home day 的 cold white / light blue / brand blue。
 
 ### LEGACY
 

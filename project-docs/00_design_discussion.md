@@ -68,7 +68,7 @@
 | SPECIALTY | `project-docs/02_pages.md` / 后续可拆独立文档 | 待深入 |
 | NEWS | `project-docs/02_pages.md` / 后续可拆独立文档 | 待深入 |
 | GOLF | `project-docs/02_pages.md` / 后续可拆独立文档 | 待深入 |
-| CHRONICLE | `project-docs/02_pages.md` / 后续可拆独立文档 | 待深入 |
+| CHRONICLE | `project-docs/02_pages.md`；详见 `project-docs/10_chronicle.md` | 已完成 opening、横向时间线、年份导航、日夜主题规格 |
 
 ---
 

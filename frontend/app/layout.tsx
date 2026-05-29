@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import { cookies } from "next/headers";
+import { ThemeProvider, type SiteTheme } from "@/components/layout/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,23 +8,29 @@ export const metadata: Metadata = {
   description: "DAEHO championship ring brand campaign home page"
 };
 
+function getInitialTheme(): SiteTheme {
+  return cookies().get("daeho-theme")?.value === "day" ? "day" : "night";
+}
+
 export default function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialTheme = getInitialTheme();
+
   return (
     <html lang="ko">
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var t=localStorage.getItem('daeho-theme');if(location.pathname==='/day')t='day';if(t!=='day'&&t!=='night')t='night';document.documentElement.dataset.siteTheme=t;document.documentElement.classList.add(t==='day'?'site-theme-day':'site-theme-night');history.scrollRestoration='manual';window.scrollTo(0,0);var h=location.pathname==='/'||location.pathname==='/day';var p=false;try{p=sessionStorage.getItem('daeho-opening-played')==='true'}catch(e){}if(h){if(p){document.documentElement.classList.add('is-opening-skipped')}else{document.documentElement.classList.add('is-opening-locked')}}}catch(e){}"
+              "try{var r=document.documentElement;var path=location.pathname;var t=null;try{t=localStorage.getItem('daeho-theme')}catch(e){}if(!t){var c=('; '+document.cookie).split('; daeho-theme=');if(c.length>1)t=c.pop().split(';').shift()}if(path==='/day')t='day';if(t!=='day'&&t!=='night')t='night';r.dataset.siteTheme=t;r.classList.add(t==='day'?'site-theme-day':'site-theme-night');var light=path==='/day'||((path==='/'||path==='/chronicle'||path.indexOf('/news')===0)&&t==='day')||(path.indexOf('/legacy/credibility')===0&&t==='day');r.classList.add(light?'page-tone-light':'page-tone-dark');history.scrollRestoration='manual';window.scrollTo(0,0);var h=path==='/'||path==='/day';var p=false;try{p=sessionStorage.getItem('daeho-opening-played')==='true'}catch(e){}if(h){if(p){r.classList.add('is-opening-skipped')}else{r.classList.add('is-opening-locked')}}}catch(e){}"
           }}
         />
       </head>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider initialTheme={initialTheme}>{children}</ThemeProvider>
       </body>
     </html>
   );

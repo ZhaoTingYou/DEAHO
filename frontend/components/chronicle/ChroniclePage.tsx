@@ -13,7 +13,7 @@ const chronicleSlides = [
     image: "/images/legacy/credibility/ring-hero-day-layout.png"
   },
   {
-    year: "1994",
+    year: "2001",
     label: "CRAFTSMANSHIP",
     title: "변치 않는 가치",
     desc: "시간은 흐르지만, 우리가 추구하는 정밀함의 본질은 결코 변하지 않습니다.",
@@ -35,13 +35,7 @@ const chronicleSlides = [
   }
 ];
 
-const chronicleYearStops = chronicleSlides.reduce<Array<{ index: number; year: string }>>((stops, slide, index) => {
-  if (!stops.some((stop) => stop.year === slide.year)) {
-    stops.push({ index, year: slide.year });
-  }
-
-  return stops;
-}, []);
+const chronicleYearStops = chronicleSlides.map((slide, index) => ({ index, year: slide.year }));
 
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
@@ -59,7 +53,26 @@ export function ChroniclePage() {
   const [introExiting, setIntroExiting] = useState(false);
   const [introComplete, setIntroComplete] = useState(false);
   const { theme, toggleTheme } = useSiteTheme();
+  const isDayTheme = theme === "day";
   const themeLabel = theme === "day" ? "Switch to night version" : "Switch to day version";
+
+  useEffect(() => {
+    document.documentElement.classList.add("is-chronicle-intro-locked");
+    document.body.classList.add("is-chronicle-intro-locked");
+    window.scrollTo(0, 0);
+
+    return () => {
+      document.documentElement.classList.remove("is-chronicle-intro-locked");
+      document.body.classList.remove("is-chronicle-intro-locked");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!introComplete) return;
+
+    document.documentElement.classList.remove("is-chronicle-intro-locked");
+    document.body.classList.remove("is-chronicle-intro-locked");
+  }, [introComplete]);
 
   useEffect(() => {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -71,9 +84,9 @@ export function ChroniclePage() {
       return;
     }
 
-    const exitTimer = window.setTimeout(() => setIntroExiting(true), 2800);
-    const stageTimer = window.setTimeout(() => setStageVisible(true), 3300);
-    const completeTimer = window.setTimeout(() => setIntroComplete(true), 4300);
+    const stageTimer = window.setTimeout(() => setStageVisible(true), 2250);
+    const exitTimer = window.setTimeout(() => setIntroExiting(true), 2750);
+    const completeTimer = window.setTimeout(() => setIntroComplete(true), 5100);
 
     return () => {
       window.clearTimeout(exitTimer);
@@ -181,7 +194,7 @@ export function ChroniclePage() {
   };
 
   return (
-    <main className={`chronicle-page ${stageVisible ? "is-stage-visible" : ""}`}>
+    <main className={`chronicle-page ${isDayTheme ? "is-day-theme" : "is-night-theme"} ${stageVisible ? "is-stage-visible" : ""}`}>
       <SiteHeader
         activeSection="CHRONICLE"
         ariaLabel="DAEHO chronicle navigation"
@@ -191,6 +204,20 @@ export function ChroniclePage() {
         theme={theme}
         themeLabel={themeLabel}
       />
+
+      <nav className="chronicle-year-nav" aria-label="Chronicle year navigation">
+        {chronicleYearStops.map((stop) => (
+          <button
+            className={activeIndex === stop.index ? "is-active" : ""}
+            type="button"
+            aria-current={activeIndex === stop.index ? "step" : undefined}
+            onClick={() => scrollToChronicleYear(stop.index)}
+            key={`${stop.year}-${stop.index}`}
+          >
+            {stop.year}
+          </button>
+        ))}
+      </nav>
 
       <section
         className="chronicle-stage"
@@ -202,20 +229,6 @@ export function ChroniclePage() {
           <div className="chronicle-bg-year" aria-hidden="true">
             <span className={yearSwitching ? "is-switching" : ""}>{displayYear}</span>
           </div>
-
-          <nav className="chronicle-year-nav" aria-label="Chronicle year navigation">
-            {chronicleYearStops.map((stop) => (
-              <button
-                className={chronicleSlides[activeIndex]?.year === stop.year ? "is-active" : ""}
-                type="button"
-                aria-current={chronicleSlides[activeIndex]?.year === stop.year ? "step" : undefined}
-                onClick={() => scrollToChronicleYear(stop.index)}
-                key={stop.year}
-              >
-                {stop.year}
-              </button>
-            ))}
-          </nav>
 
           <div className="chronicle-track" style={trackStyle}>
             {chronicleSlides.map((slide, index) => {
@@ -252,11 +265,12 @@ export function ChroniclePage() {
             })}
           </div>
 
-          <div className="chronicle-progress" aria-hidden="true">
-            <i style={{ width: `${progress * 100}%` }} />
-          </div>
         </div>
       </section>
+
+      <div className="chronicle-progress" aria-hidden="true">
+        <i style={{ width: `${progress * 100}%` }} />
+      </div>
 
       <div className={`chronicle-intro ${introExiting ? "is-exiting" : ""} ${introComplete ? "is-complete" : ""}`} aria-hidden="true">
         <svg viewBox="0 0 280 280">
