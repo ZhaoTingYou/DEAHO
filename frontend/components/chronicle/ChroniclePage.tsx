@@ -35,6 +35,14 @@ const chronicleSlides = [
   }
 ];
 
+const chronicleYearStops = chronicleSlides.reduce<Array<{ index: number; year: string }>>((stops, slide, index) => {
+  if (!stops.some((stop) => stop.year === slide.year)) {
+    stops.push({ index, year: slide.year });
+  }
+
+  return stops;
+}, []);
+
 const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 
 export function ChroniclePage() {
@@ -154,6 +162,24 @@ export function ChroniclePage() {
     [progress]
   );
 
+  const scrollToChronicleYear = (index: number) => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const targetProgress = clamp(index / Math.max(1, chronicleSlides.length - 1));
+    const isMobile = window.innerWidth <= 960 || window.matchMedia("(max-aspect-ratio: 3 / 4)").matches;
+
+    if (isMobile) {
+      stage.querySelectorAll<HTMLElement>(".chronicle-slide")[index]?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
+    const rect = stage.getBoundingClientRect();
+    const stageTop = window.scrollY + rect.top;
+    const travel = Math.max(1, rect.height - window.innerHeight);
+    window.scrollTo({ top: stageTop + targetProgress * travel, behavior: "smooth" });
+  };
+
   return (
     <main className={`chronicle-page ${stageVisible ? "is-stage-visible" : ""}`}>
       <SiteHeader
@@ -176,6 +202,20 @@ export function ChroniclePage() {
           <div className="chronicle-bg-year" aria-hidden="true">
             <span className={yearSwitching ? "is-switching" : ""}>{displayYear}</span>
           </div>
+
+          <nav className="chronicle-year-nav" aria-label="Chronicle year navigation">
+            {chronicleYearStops.map((stop) => (
+              <button
+                className={chronicleSlides[activeIndex]?.year === stop.year ? "is-active" : ""}
+                type="button"
+                aria-current={chronicleSlides[activeIndex]?.year === stop.year ? "step" : undefined}
+                onClick={() => scrollToChronicleYear(stop.index)}
+                key={stop.year}
+              >
+                {stop.year}
+              </button>
+            ))}
+          </nav>
 
           <div className="chronicle-track" style={trackStyle}>
             {chronicleSlides.map((slide, index) => {
