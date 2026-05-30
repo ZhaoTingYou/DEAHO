@@ -1,5 +1,20 @@
 # 09_legacy_credibility.md — LEGACY / credibility 页面详细规格
 
+## 2026-05-29 当前实现更新
+
+`/legacy/credibility` 已从早期“整张视觉稿铺满”的方式改为真正网页结构实现。后续维护时以这个原则为准：
+
+- 页面文字必须由 DOM 渲染，不能依赖带页面标题、段落、指标文字的效果图。
+- 如果素材图中自带页面文案、指标、标题或整版排版文字，只能作为参考，不直接作为可见页面主图。
+- 产品图、包装图、图标类素材可以使用，但页面级文案、数字与标签都由 React 数据和组件生成。
+- 视觉结构由 `frontend/components/legacy/CredibilityPage.tsx` 生成，内容数据由 `frontend/data/credibility.ts` 维护。
+- 动效使用 GSAP + ScrollTrigger：section 入场、数字递增、SVG 线条绘制、图标/节点点亮、轻微视差和光扫。
+- 当前页面固定为 6 个 section：Hero、38 Years、Market Leader、Defect Rate 0%、Continuous R&D、Vertical Integration 100%。
+- 白天 / 黑夜模式共用同一套布局，只切换色调、背景层与对比度；不再做两套结构。
+- 38 Years section 中的山脉路线已经改为 CSS/SVG 绘制，避免使用带大数字文字的整图。
+- Hero、Market、Defect 的产品视觉优先使用 `frontend/public/images/legacy/credibility/motion-assets/products/` 中无页面文案的素材。
+- 移动端使用纵向堆叠结构，保留同样内容和动效气质，并避免横向溢出。
+
 ## 设计依据
 
 参考设计图：

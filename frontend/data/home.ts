@@ -60,7 +60,7 @@ export const proofCards = [
   {
     key: "annual",
     type: "metric",
-    metric: "5,000+",
+    metric: "5000+",
     label: "매년 제작"
   },
   {
@@ -73,16 +73,24 @@ export const proofCards = [
 
 export const recentProjects = [
   {
-    title: "Championship Blueprint",
-    image: "/images/project-1.png"
+    title: "Legacy Forged in Victory",
+    image: "/images/project-1.png",
+    href: "/news/legacy-forged-in-victory"
   },
   {
-    title: "Commission Rings",
-    image: "/images/project-2.png"
+    title: "The Art of Detail",
+    image: "/images/project-3.png",
+    href: "/news/the-art-of-detail"
   },
   {
-    title: "Custom Craft",
-    image: "/images/project-3.png"
+    title: "2024 Signature Collection",
+    image: "/images/project-2.png",
+    href: "/news/2024-signature-collection"
+  },
+  {
+    title: "WINS Crowned Champions",
+    image: "/images/home-recent-projects.png",
+    href: "/news/wins-crowned-champions"
   }
 ];
 

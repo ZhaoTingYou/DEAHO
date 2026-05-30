@@ -15,11 +15,6 @@ const openingTiming = {
 
 const openingPlayedKey = "daeho-opening-played";
 
-const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
-const easeOutCubic = (value: number) => 1 - Math.pow(1 - value, 3);
-const easeInOutCubic = (value: number) =>
-  value < 0.5 ? 4 * value * value * value : 1 - Math.pow(-2 * value + 2, 3) / 2;
-
 function hasOpeningPlayed() {
   if (typeof window === "undefined") return false;
 
@@ -41,7 +36,6 @@ function markOpeningPlayed() {
 
 export function HomePage({ initialTheme }: { initialTheme?: SiteTheme }) {
   const heroRef = useRef<HTMLElement | null>(null);
-  const heroStageRef = useRef<HTMLElement | null>(null);
   const logoTargetRef = useRef<HTMLAnchorElement | null>(null);
   const introLogoRef = useRef<HTMLDivElement | null>(null);
   const openingRef = useRef<HTMLDivElement | null>(null);
@@ -360,55 +354,21 @@ export function HomePage({ initialTheme }: { initialTheme?: SiteTheme }) {
   }, [runOpening]);
 
   useEffect(() => {
-    const stage = heroStageRef.current;
-    if (!stage) return;
-
-    let frame = 0;
-    const updateTransition = () => {
-      frame = 0;
-      const rect = stage.getBoundingClientRect();
-      const maxTravel = Math.max(1, rect.height - window.innerHeight);
-      const progress = clamp(-rect.top / maxTravel);
-      const isCompact = window.innerWidth <= 960 || window.matchMedia("(max-aspect-ratio: 3 / 4)").matches;
-      const featuredIn = isCompact ? 1 : easeInOutCubic(clamp((progress - 0.22) / 0.48));
-      const heroExit = isCompact ? 0 : easeOutCubic(clamp((progress - 0.4) / 0.48));
-
-      stage.style.setProperty("--featured-in", featuredIn.toFixed(4));
-      stage.style.setProperty("--hero-exit", heroExit.toFixed(4));
-    };
-
-    const requestUpdate = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(updateTransition);
-    };
-
-    updateTransition();
-    window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
-
-    return () => {
-      if (frame) window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
-    };
-  }, []);
-
-  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting && entry.target === featuredRef.current) {
-            window.setTimeout(() => setFeaturedEntered(true), 80);
+            setFeaturedEntered(true);
           }
           if (entry.isIntersecting && entry.target === proofRef.current) {
-            window.setTimeout(() => setProofEntered(true), 220);
+            window.setTimeout(() => setProofEntered(true), 120);
           }
           if (entry.isIntersecting && entry.target === recentRef.current) {
             setRecentEntered(true);
           }
         }
       },
-      { threshold: 0.24, rootMargin: "0px 0px -12% 0px" }
+      { threshold: [0.04, 0.18, 0.32], rootMargin: "0px 0px -4% 0px" }
     );
 
     if (featuredRef.current) observer.observe(featuredRef.current);
@@ -459,7 +419,7 @@ export function HomePage({ initialTheme }: { initialTheme?: SiteTheme }) {
         themeLabel={themeLabel}
       />
 
-      <section className="hero-featured-stage" ref={heroStageRef} aria-label="DAEHO home opening and featured categories">
+      <section className="hero-featured-stage" aria-label="DAEHO home opening and featured categories">
         <section className={heroClassName} ref={heroRef} aria-label="DAEHO home hero">
           <div className="hero-blueprint" aria-hidden="true" />
 
@@ -644,22 +604,24 @@ function RecentProjects({
   return (
     <section className={`recent-section ${recentEntered ? "is-entered" : ""}`} ref={recentRef} aria-label="Recent projects">
       <div className="recent-inner">
-        <h2>RECENT PROJECTS</h2>
+        <div className="recent-heading">
+          <h2>RECENT PROJECTS</h2>
+          <a className="view-more-link" href="/news">
+            VIEW MORE
+          </a>
+        </div>
         <div className="project-reel">
           {recentProjects.map((project, index) => (
-            <article className="project-card" key={project.title}>
+            <a className="project-card" href={project.href} key={project.title}>
               <img src={project.image} alt={project.title} />
               <span className="project-medal" aria-hidden="true">
                 Champion
               </span>
               <p>{project.title}</p>
               <span>{String(index + 1).padStart(2, "0")}</span>
-            </article>
+            </a>
           ))}
         </div>
-        <a className="view-more-link" href="/news">
-          VIEW MORE
-        </a>
         <aside className="brand-official" aria-label="Brand official">
           <h3>BRAND OFFICIAL</h3>
           <div className="brand-marquee">

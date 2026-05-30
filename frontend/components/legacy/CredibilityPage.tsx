@@ -3,110 +3,232 @@
 import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { useSiteTheme } from "@/components/layout/ThemeProvider";
-import { credibilityDetailBlocks, credibilityScrollSheets, type CredibilityScrollSheet } from "@/data/credibility";
+import {
+  credibilityDecorativePath,
+  credibilityMotionProductPath,
+  credibilitySections,
+  type CredibilitySection
+} from "@/data/credibility";
 
-const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
-const smoothstep = (value: number) => value * value * (3 - 2 * value);
+const marketBars = [42, 58, 72, 88];
+const integrationNodes = ["Planning", "Design", "Production", "QC", "Packing", "Delivery"];
+
+function formatMetric(target: number, suffix = "") {
+  return `${target.toLocaleString("en-US")}${suffix}`;
+}
+
+function splitTitle(title: string) {
+  return title.split("\n").map((line) => line.trim());
+}
 
 export function CredibilityPage() {
-  const rootRef = useRef<HTMLDivElement | null>(null);
-  const scrollStageRef = useRef<HTMLElement | null>(null);
-  const [activeSheet, setActiveSheet] = useState(0);
+  const rootRef = useRef<HTMLElement | null>(null);
+  const [activeSectionId, setActiveSectionId] = useState<string>(credibilitySections[0].id);
   const { theme, toggleTheme } = useSiteTheme();
   const isNightTheme = theme === "night";
 
   useEffect(() => {
     const root = rootRef.current;
-    const stage = scrollStageRef.current;
-    if (!root || !stage) return;
-
-    let frame = 0;
-    const sheetCount = credibilityScrollSheets.length;
-
-    const updateScrollSequence = () => {
-      frame = 0;
-      const rect = stage.getBoundingClientRect();
-      const maxTravel = Math.max(1, rect.height - window.innerHeight);
-      const progress = clamp(-rect.top / maxTravel);
-      const tone = isNightTheme ? 1 : 0;
-      const sheetTravel = Math.max(1, sheetCount - 1);
-      const rawSheetProgress = progress * sheetTravel;
-      const sheetBase = Math.min(sheetTravel - 1, Math.floor(rawSheetProgress));
-      const localSheetProgress = rawSheetProgress - sheetBase;
-      const heldSheetProgress =
-        rawSheetProgress >= sheetTravel
-          ? sheetTravel
-          : sheetBase + smoothstep(clamp((localSheetProgress - 0.58) / 0.36));
-      const currentSheet = Math.min(sheetCount - 1, Math.max(0, Math.round(heldSheetProgress)));
-
-      root.style.setProperty("--credibility-progress", progress.toFixed(4));
-      root.style.setProperty("--credibility-tone", tone.toFixed(4));
-      stage.style.setProperty("--scroll-shift", `${-(heldSheetProgress * 100).toFixed(3)}vw`);
-      setActiveSheet(currentSheet);
-    };
-
-    const requestUpdate = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(updateScrollSequence);
-    };
-
-    updateScrollSequence();
-    window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
-
-    return () => {
-      if (frame) window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
-    };
-  }, [isNightTheme]);
-
-  useEffect(() => {
-    const root = rootRef.current;
     if (!root) return;
 
-    const targets = Array.from(
-      root.querySelectorAll<HTMLElement>(".credibility-sheet, .credibility-detail-card, .credibility-cta a")
-    );
-    if (!targets.length) return;
+    const sections = Array.from(root.querySelectorAll<HTMLElement>(".credibility2026-real-section"));
+    const numberNodes = Array.from(root.querySelectorAll<HTMLElement>("[data-count-target]"));
+
+    const setFinalNumbers = () => {
+      numberNodes.forEach((node) => {
+        const target = Number(node.dataset.countTarget ?? "0");
+        const suffix = node.dataset.countSuffix ?? "";
+        node.textContent = formatMetric(target, suffix);
+      });
+    };
 
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced || !("IntersectionObserver" in window)) {
-      targets.forEach((target) => target.classList.add("is-mobile-visible"));
+    if (prefersReduced) {
+      root.classList.add("is-reduced-motion");
+      sections.forEach((section) => section.classList.add("is-visible"));
+      setFinalNumbers();
       return;
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-mobile-visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: "0px 0px -18% 0px", threshold: 0.16 }
-    );
+    let cancelled = false;
+    let context: { revert: () => void } | null = null;
 
-    targets.forEach((target, index) => {
-      target.style.setProperty("--mobile-reveal-delay", `${Math.min(index * 70, 280)}ms`);
-      observer.observe(target);
-    });
+    root.classList.add("is-motion-enhanced");
+    sections[0]?.classList.add("is-visible");
 
-    return () => observer.disconnect();
+    void (async () => {
+      try {
+        const [{ gsap }, { ScrollTrigger }] = await Promise.all([import("gsap"), import("gsap/ScrollTrigger")]);
+        if (cancelled) return;
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        context = gsap.context(() => {
+          gsap.set(root.querySelectorAll("[data-cred-motion], [data-cred-visual]"), {
+            autoAlpha: 0,
+            y: 34,
+            filter: "blur(10px)"
+          });
+          gsap.set(root.querySelectorAll(".credibility2026-market-bar"), { scaleY: 0, transformOrigin: "bottom center" });
+          gsap.set(root.querySelectorAll(".credibility2026-process-node, .credibility2026-defect-node, .credibility2026-rd-node"), {
+            autoAlpha: 0,
+            scale: 0.82
+          });
+          gsap.set(root.querySelectorAll(".credibility2026-hero-card"), {
+            autoAlpha: 0,
+            y: 28,
+            scale: 0.96
+          });
+
+          sections.forEach((section, index) => {
+            const motionItems = Array.from(section.querySelectorAll<HTMLElement>("[data-cred-motion]"));
+            const visual = section.querySelector<HTMLElement>("[data-cred-visual]");
+            const paths = Array.from(section.querySelectorAll<SVGPathElement>(".credibility2026-visual-line path"));
+            const bars = Array.from(section.querySelectorAll<HTMLElement>(".credibility2026-market-bar"));
+            const nodes = Array.from(
+              section.querySelectorAll<HTMLElement>(".credibility2026-process-node, .credibility2026-defect-node, .credibility2026-rd-node")
+            );
+            const heroCards = Array.from(section.querySelectorAll<HTMLElement>(".credibility2026-hero-card"));
+            const sweep = section.querySelector<HTMLElement>(".credibility2026-light-sweep");
+
+            paths.forEach((path) => {
+              const length = typeof path.getTotalLength === "function" ? path.getTotalLength() : 560;
+              gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
+            });
+
+            const timeline = gsap.timeline({
+              defaults: { ease: "power3.out" },
+              scrollTrigger: {
+                trigger: section,
+                start: index === 0 ? "top 88%" : "top 72%",
+                once: true,
+                onEnter: () => {
+                  section.classList.add("is-visible");
+                  setActiveSectionId(section.id);
+                }
+              }
+            });
+
+            timeline.to(motionItems, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.82, stagger: 0.07 }, 0);
+
+            if (visual) {
+              timeline.to(visual, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 1.08 }, 0.18);
+            }
+
+            if (heroCards.length) {
+              timeline.to(heroCards, { autoAlpha: 1, y: 0, scale: 1, duration: 1.08, stagger: 0.08 }, 0.34);
+              gsap.to(section.querySelectorAll(".credibility2026-hero-card.is-primary"), {
+                y: -8,
+                duration: 4.6,
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut"
+              });
+            }
+
+            if (paths.length) {
+              timeline.to(paths, { strokeDashoffset: 0, duration: 1.45, stagger: 0.04, ease: "power2.out" }, 0.46);
+            }
+
+            if (bars.length) {
+              timeline.to(bars, { scaleY: 1, duration: 1.05, stagger: 0.1, ease: "power3.out" }, 0.5);
+            }
+
+            if (nodes.length) {
+              timeline.to(nodes, { autoAlpha: 1, scale: 1, duration: 0.58, stagger: 0.09, ease: "power2.out" }, 0.68);
+            }
+
+            if (sweep) {
+              timeline.fromTo(
+                sweep,
+                { xPercent: -90, autoAlpha: 0 },
+                { xPercent: 90, autoAlpha: 0.46, duration: 1.55, ease: "power2.inOut" },
+                0.72
+              );
+            }
+
+            ScrollTrigger.create({
+              trigger: section,
+              start: "top 48%",
+              end: "bottom 48%",
+              onEnter: () => setActiveSectionId(section.id),
+              onEnterBack: () => setActiveSectionId(section.id)
+            });
+
+            if (visual) {
+              gsap.fromTo(
+                visual,
+                { yPercent: -1.6 },
+                {
+                  yPercent: 1.6,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: section,
+                    start: "top bottom",
+                    end: "bottom top",
+                    scrub: 0.9
+                  }
+                }
+              );
+            }
+          });
+
+          numberNodes.forEach((node) => {
+            const target = Number(node.dataset.countTarget ?? "0");
+            const suffix = node.dataset.countSuffix ?? "";
+
+            ScrollTrigger.create({
+              trigger: node,
+              start: "top 82%",
+              once: true,
+              onEnter: () => {
+                if (target === 0) {
+                  node.textContent = formatMetric(0, suffix);
+                  return;
+                }
+
+                const counter = { value: 0 };
+                gsap.to(counter, {
+                  value: target,
+                  duration: 1.55,
+                  ease: "power3.out",
+                  onUpdate: () => {
+                    node.textContent = formatMetric(Math.round(counter.value), suffix);
+                  },
+                  onComplete: () => {
+                    node.textContent = formatMetric(target, suffix);
+                  }
+                });
+              }
+            });
+          });
+        }, root);
+
+        ScrollTrigger.refresh();
+      } catch {
+        if (!cancelled) {
+          root.classList.remove("is-motion-enhanced");
+          sections.forEach((section) => section.classList.add("is-visible"));
+          setFinalNumbers();
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      context?.revert();
+      root.classList.remove("is-motion-enhanced");
+    };
   }, []);
 
   const pageClassName = useMemo(
     () =>
       [
         "credibility-page",
-        isNightTheme ? "is-night-locked" : "",
-        !isNightTheme ? "is-day-locked" : "",
-        !isNightTheme ? "is-header-on-light" : ""
-      ]
-        .filter(Boolean)
-        .join(" "),
-    [activeSheet, isNightTheme]
+        "credibility2026",
+        isNightTheme ? "is-night-theme is-night-locked" : "is-day-theme is-day-locked is-header-on-light"
+      ].join(" "),
+    [isNightTheme]
   );
 
   return (
@@ -115,171 +237,245 @@ export function CredibilityPage() {
         activeLegacyHref="/legacy/credibility"
         activeSection="LEGACY"
         ariaLabel="DAEHO credibility navigation"
-        className="credibility-site-header"
+        className="credibility2026-site-header"
         onThemeToggle={toggleTheme}
         theme={theme}
         themeLabel={isNightTheme ? "Switch to day version" : "Switch to night version"}
       />
 
-      <section
-        className="credibility-scroll-stage"
-        ref={scrollStageRef}
-        style={
-          {
-            "--sheet-count": credibilityScrollSheets.length,
-            height: `${credibilityScrollSheets.length * 108}svh`
-          } as CSSProperties
-        }
-        aria-label="Credibility scroll proof sequence"
-      >
-        <div className="credibility-scroll-viewport">
-          <div className="credibility-night-field" aria-hidden="true" />
-          <div className="credibility-scroll-track">
-            {credibilityScrollSheets.map((sheet, index) => (
-              <ScrollSheet
-                active={index <= activeSheet}
-                index={index}
-                key={sheet.id}
-                sheet={sheet}
-              />
-            ))}
-          </div>
-          <div className="credibility-scroll-progress" aria-hidden="true">
-            <span style={{ width: `${((activeSheet + 1) / credibilityScrollSheets.length) * 100}%` }} />
-          </div>
-        </div>
-      </section>
+      <nav className="credibility2026-rail" aria-label="Credibility section navigation">
+        {credibilitySections.map((section) => (
+          <a className={activeSectionId === section.id ? "is-active" : ""} href={`#${section.id}`} key={section.id}>
+            <span>{section.index}</span>
+          </a>
+        ))}
+      </nav>
 
-      <section className="credibility-details" aria-label="Credibility process detail">
-        <div className="credibility-details-heading">
-          <span>PROOF SYSTEM</span>
-          <h2>Built around control, inspection, and delivery.</h2>
-        </div>
-        <div className="credibility-detail-list">
-          {credibilityDetailBlocks.map((block) => (
-            <article className="credibility-detail-card" key={block.title}>
-              <img src={block.image} alt="" />
-              <div>
-                <span>{block.number}</span>
-                <h3>{block.title}</h3>
-                <p>{block.copy}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="credibility-cta" aria-label="Credibility next steps">
-        <a href="/specialty/technique">
-          <span>VIEW OUR PROCESS</span>
-          <small>Technique</small>
-        </a>
-        <a href="/legacy/achievement">
-          <span>SEE ACHIEVEMENTS</span>
-          <small>Delivery record</small>
-        </a>
-      </section>
+      {credibilitySections.map((section) => (
+        <CredibilitySectionBlock key={section.id} section={section} />
+      ))}
     </main>
   );
 }
 
-function ScrollSheet({ active, index, sheet }: { active: boolean; index: number; sheet: CredibilityScrollSheet }) {
-  if (sheet.type === "asset") {
-    return (
-      <article className={`credibility-sheet credibility-sheet-asset ${active ? "is-active" : ""}`} aria-label={sheet.title}>
-        <div className="scroll-sheet-frame">
-          <img className="scroll-sheet-image scroll-sheet-image-day" src={sheet.dayAsset} alt="" />
-          <img className="scroll-sheet-image scroll-sheet-image-night" src={sheet.nightAsset} alt="" />
-          {sheet.mobileDayAsset ? (
-            <img className="scroll-sheet-image scroll-sheet-image-mobile scroll-sheet-image-mobile-day" src={sheet.mobileDayAsset} alt="" />
-          ) : null}
-          {sheet.mobileNightAsset ? (
-            <img className="scroll-sheet-image scroll-sheet-image-mobile scroll-sheet-image-mobile-night" src={sheet.mobileNightAsset} alt="" />
-          ) : null}
-          <div className="scroll-sheet-mobile-title" aria-hidden="true">
-            <span>DAEHO CREDIBILITY</span>
-            <h1>{sheet.title}</h1>
-            <p>38년 동안 쌓아온 신뢰와 안정적인 납품 경험</p>
-          </div>
-        </div>
-      </article>
-    );
-  }
+function CredibilitySectionBlock({ section }: { section: CredibilitySection }) {
+  const Heading = section.id === "hero" ? "h1" : "h2";
 
   return (
-    <article className={`credibility-sheet credibility-sheet-metric is-${sheet.accent} ${active ? "is-active" : ""}`}>
-      <div className="credibility-sheet-copy">
-        <span>{String(index + 1).padStart(2, "0")}</span>
-        <strong>{sheet.metric}</strong>
-        <h2>{sheet.label}</h2>
-        <p>{sheet.support}</p>
-        <div className="credibility-dash-lines" aria-hidden="true">
-          <i />
-          <i />
-          <i />
+    <section className={`credibility2026-section credibility2026-real-section credibility2026-${section.id} is-${section.tone}`} id={section.id}>
+      <div className="credibility2026-section-grid" aria-hidden="true" />
+      <span className="credibility2026-light-sweep" aria-hidden="true" />
+
+      <div className="credibility2026-real-inner">
+        <div className="credibility2026-real-copy">
+          <span className="credibility2026-real-index" data-cred-motion>
+            {section.index}
+          </span>
+          <p className="credibility2026-real-kicker" data-cred-motion>
+            {section.eyebrow}
+          </p>
+          <Heading className="credibility2026-real-title">
+            {splitTitle(section.title).map((line) => (
+              <span className="credibility2026-real-title-line" data-cred-motion key={line}>
+                {line}
+              </span>
+            ))}
+          </Heading>
+          <p className="credibility2026-real-subtitle" data-cred-motion>
+            {section.subtitle}
+          </p>
+          <div className="credibility2026-real-body" data-cred-motion>
+            {section.body.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+
+          {section.metric ? (
+            <div className="credibility2026-real-metric" data-cred-motion>
+              <strong data-count-target={section.metric.target} data-count-suffix={section.metric.suffix ?? ""}>
+                {formatMetric(0, section.metric.suffix)}
+              </strong>
+              <span>{section.metric.label}</span>
+            </div>
+          ) : null}
         </div>
+
+        <div className="credibility2026-real-visual" data-cred-visual>
+          <CredibilityVisual section={section} />
+        </div>
+
+        {section.points ? (
+          <div className="credibility2026-real-points" data-cred-motion>
+            {section.points.map((point) => (
+              <article key={point.label}>
+                <img src={point.icon} alt="" aria-hidden="true" />
+                <span>{point.label}</span>
+                <strong>{point.value}</strong>
+              </article>
+            ))}
+          </div>
+        ) : null}
       </div>
-      <ProofIllustration visual={sheet.visual} />
-    </article>
+    </section>
   );
 }
 
-function ProofIllustration({ visual }: { visual: Extract<CredibilityScrollSheet, { type: "metric" }>["visual"] }) {
-  if (visual === "growth-history") {
-    return (
-      <svg className="proof-illustration proof-growth" viewBox="0 0 560 360" aria-hidden="true">
-        <path d="M60 290H500" />
-        <path d="M86 272L160 250L230 212L300 176L370 110L466 48" />
-        <path d="M430 50L466 48L454 84" />
-        <path d="M120 288V220H154V288M186 288V178H220V288M252 288V134H286V288M318 288V194H352V288M384 288V156H418V288" />
-        <circle cx="160" cy="250" r="8" />
-        <circle cx="300" cy="176" r="8" />
-        <circle cx="370" cy="110" r="8" />
-        <text x="152" y="95">38</text>
-      </svg>
-    );
+function CredibilityVisual({ section }: { section: CredibilitySection }) {
+  switch (section.visualKind) {
+    case "hero":
+      return <HeroVisual section={section} />;
+    case "journey":
+      return <JourneyVisual />;
+    case "market":
+      return <MarketVisual />;
+    case "defect":
+      return <DefectVisual />;
+    case "rd":
+      return <RdVisual />;
+    case "integration":
+      return <IntegrationVisual />;
+    default:
+      return null;
   }
+}
 
-  if (visual === "controlled-process") {
-    return (
-      <svg className="proof-illustration proof-process-flow" viewBox="0 0 560 360" aria-hidden="true">
-        <path className="dotted" d="M108 178C174 98 248 260 314 178S436 132 468 210" />
-        <rect x="70" y="110" width="92" height="68" rx="8" />
-        <path d="M92 196H140M116 178V196" />
-        <circle cx="280" cy="174" r="52" />
-        <path d="M280 132V154M280 194V216M238 174H260M300 174H322M250 144L264 158M296 190L310 204M250 204L264 190M296 158L310 144" />
-        <circle cx="404" cy="130" r="44" />
-        <path d="M432 158L466 192" />
-        <path d="M386 130H422M404 112V148" />
-        <rect x="392" y="222" width="104" height="50" rx="8" />
-        <path d="M416 222V196H472V222M416 272C416 286 438 286 438 272M456 272C456 286 478 286 478 272" />
-      </svg>
-    );
-  }
-
-  if (visual === "delivery-shield") {
-    return (
-      <svg className="proof-illustration proof-shield" viewBox="0 0 560 360" aria-hidden="true">
-        <path d="M280 44C232 78 188 84 148 88V172C148 240 198 292 280 324C362 292 412 240 412 172V88C372 84 328 78 280 44Z" />
-        <path d="M280 76C242 102 210 108 180 112V172C180 224 218 264 280 292C342 264 380 224 380 172V112C350 108 318 102 280 76Z" />
-        <text x="234" y="202">0%</text>
-        <path d="M392 250L424 282L482 214" />
-        <circle cx="436" cy="248" r="62" />
-        <path d="M116 112C94 142 82 184 82 224M444 112C466 142 478 184 478 224" />
-      </svg>
-    );
-  }
-
+function HeroVisual({ section }: { section: CredibilitySection }) {
   return (
-    <svg className="proof-illustration proof-delivery" viewBox="0 0 560 360" aria-hidden="true">
-      <path d="M52 122C150 70 260 70 360 112C420 136 466 174 508 220" />
-      <path d="M72 196C174 150 282 150 382 190C430 210 470 238 504 272" />
-      <path d="M96 92C116 102 132 120 142 142M206 66C216 92 218 120 212 150M326 76C304 104 292 132 292 164M430 136C398 154 374 178 358 210" />
-      <rect x="120" y="228" width="240" height="62" rx="8" />
-      <path d="M360 246H436L480 290H360V246Z" />
-      <path d="M154 290C154 312 188 312 188 290M386 290C386 312 420 312 420 290" />
-      <path d="M172 210H254M190 194H290M208 178H326" />
-      <path d="M252 228V184H318V228" />
-    </svg>
+    <div className="credibility2026-hero-display">
+      <div className="credibility2026-hero-architecture" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="credibility2026-hero-podium" aria-hidden="true">
+        <span className="credibility2026-hero-podium-top" />
+        <span className="credibility2026-hero-podium-base" />
+      </div>
+      {section.heroPhotos?.map((photo) => (
+        <figure className={`credibility2026-hero-card ${photo.className}`} key={photo.src}>
+          <img src={photo.src} alt={photo.alt} />
+        </figure>
+      ))}
+    </div>
+  );
+}
+
+function JourneyVisual() {
+  return (
+    <div className="credibility2026-journey-visual">
+      <span className="credibility2026-orbit-glow" aria-hidden="true" />
+      <svg className="credibility2026-journey-landscape credibility2026-visual-line" viewBox="0 0 640 420" aria-hidden="true">
+        <path className="credibility2026-journey-horizon" d="M36 302 C118 258, 164 278, 230 226 C296 174, 345 202, 420 134 C488 72, 542 88, 604 36" />
+        <path className="credibility2026-journey-ridge" d="M58 344 C132 318, 188 330, 258 286 C330 242, 380 260, 462 204 C516 168, 562 164, 614 136" />
+        <path className="credibility2026-journey-contour" d="M80 374 C156 354, 242 362, 330 334 C416 306, 498 310, 582 274" />
+        <path className="credibility2026-journey-contour" d="M112 256 C188 234, 238 244, 304 206 C366 170, 420 178, 502 112" />
+      </svg>
+      <svg className="credibility2026-visual-line credibility2026-journey-route" viewBox="0 0 640 420" aria-hidden="true">
+        <path d="M70 330 C 150 290, 190 220, 260 235 C 335 250, 355 135, 430 145 C 500 155, 530 82, 585 96" />
+        <circle cx="70" cy="330" r="7" />
+        <circle cx="260" cy="235" r="7" />
+        <circle cx="430" cy="145" r="7" />
+        <circle cx="585" cy="96" r="7" />
+      </svg>
+      <div className="credibility2026-journey-number">
+        <strong data-count-target="38">0</strong>
+        <span>years</span>
+      </div>
+    </div>
+  );
+}
+
+function MarketVisual() {
+  return (
+    <div className="credibility2026-market-visual">
+      <div className="credibility2026-market-photo">
+        <img src={`${credibilityMotionProductPath}/market_leader_ring_on_podium.png`} alt="Championship ring detail on a marble podium" />
+      </div>
+      <div className="credibility2026-market-chart" aria-hidden="true">
+        {marketBars.map((height, index) => (
+          <span
+            className="credibility2026-market-bar"
+            style={{ "--bar-height": `${height}%` } as CSSProperties}
+            key={`${height}-${index}`}
+          />
+        ))}
+      </div>
+      <svg className="credibility2026-visual-line credibility2026-market-line" viewBox="0 0 640 300" aria-hidden="true">
+        <path d="M70 230 C 185 210, 250 168, 330 176 C 430 186, 474 96, 575 62" />
+        <circle cx="575" cy="62" r="8" />
+      </svg>
+    </div>
+  );
+}
+
+function DefectVisual() {
+  return (
+    <div className="credibility2026-defect-visual">
+      <div className="credibility2026-defect-package">
+        <img src={`${credibilityMotionProductPath}/zero_defect_package_box.png`} alt="DAEHO delivery package box" />
+      </div>
+      <svg className="credibility2026-visual-line credibility2026-shield-line" viewBox="0 0 360 420" aria-hidden="true">
+        <path d="M180 42 C 210 72, 254 88, 300 96 L300 188 C300 286 242 353 180 382 C118 353 60 286 60 188 L60 96 C106 88 150 72 180 42 Z" />
+        <path d="M126 213 L162 249 L238 167" />
+      </svg>
+      <div className="credibility2026-defect-score">
+        <strong data-count-target="0" data-count-suffix="%">
+          0%
+        </strong>
+        <span>delivery failure</span>
+      </div>
+      <div className="credibility2026-defect-nodes">
+        <img className="credibility2026-defect-node" src={`${credibilityDecorativePath}/icon_clipboard.png`} alt="" aria-hidden="true" />
+        <img className="credibility2026-defect-node" src={`${credibilityDecorativePath}/icon_box.png`} alt="" aria-hidden="true" />
+        <img className="credibility2026-defect-node" src={`${credibilityDecorativePath}/icon_truck.png`} alt="" aria-hidden="true" />
+      </div>
+    </div>
+  );
+}
+
+function RdVisual() {
+  return (
+    <div className="credibility2026-rd-visual">
+      <svg className="credibility2026-visual-line credibility2026-factory-line" viewBox="0 0 680 420" aria-hidden="true">
+        <path d="M80 330 L80 218 L180 252 L180 218 L282 252 L282 185 L362 185 L362 330 Z" />
+        <path d="M398 330 L398 142 L520 142 L520 330" />
+        <path d="M434 142 L434 92 L484 92 L484 142" />
+        <path d="M95 330 H610" />
+        <path d="M438 234 C468 198, 522 202, 548 238" />
+        <path d="M548 238 L588 278" />
+      </svg>
+      <img className="credibility2026-rd-robot credibility2026-rd-node" src={`${credibilityDecorativePath}/icon_robot_arm.png`} alt="" aria-hidden="true" />
+      <div className="credibility2026-rd-belt" aria-hidden="true">
+        <span className="credibility2026-rd-node" />
+        <span className="credibility2026-rd-node" />
+        <span className="credibility2026-rd-node" />
+      </div>
+    </div>
+  );
+}
+
+function IntegrationVisual() {
+  return (
+    <div className="credibility2026-integration-visual">
+      <svg className="credibility2026-visual-line credibility2026-process-line" viewBox="0 0 520 520" aria-hidden="true">
+        <path d="M260 64 A196 196 0 1 1 259.9 64" />
+        <path d="M383 108 L420 114 L405 148" />
+      </svg>
+      <div className="credibility2026-process-center">
+        <strong data-count-target="100" data-count-suffix="%">
+          0%
+        </strong>
+        <span>integrated</span>
+      </div>
+      {integrationNodes.map((node, index) => (
+        <span
+          className="credibility2026-process-node"
+          style={{ "--node-index": index } as CSSProperties}
+          key={node}
+        >
+          {node}
+        </span>
+      ))}
+    </div>
   );
 }

@@ -1,0 +1,18 @@
+/* DAEHO Legacy / Credibility motion helpers */
+:root {
+  --daeho-blue: #345B7D;
+  --daeho-light: #BDCDDB;
+  --daeho-white: #FFFFFF;
+  --daeho-gold: #BE9A5B;
+  --ease-luxury: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-line { overflow: hidden; }
+.reveal-line > span { display: inline-block; transform: translateY(110%); opacity: 0; }
+.is-visible .reveal-line > span { transform: translateY(0); opacity: 1; transition: transform .9s var(--ease-luxury), opacity .9s var(--ease-luxury); }
+.fade-up { opacity: 0; transform: translateY(24px); }
+.is-visible .fade-up { opacity: 1; transform: translateY(0); transition: opacity .8s var(--ease-luxury), transform .8s var(--ease-luxury); }
+.svg-draw path { stroke-dasharray: var(--path-length); stroke-dashoffset: var(--path-length); }
+.is-visible .svg-draw path { stroke-dashoffset: 0; transition: stroke-dashoffset 1.6s var(--ease-luxury); }
+@keyframes daeho-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes daeho-shine { 0%,85%,100%{opacity:0; transform:translateX(-20%)} 90%{opacity:.38} 96%{opacity:0; transform:translateX(120%)} }
+@keyframes daeho-orbit { from{offset-distance:0%} to{offset-distance:100%} }

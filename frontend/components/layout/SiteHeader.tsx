@@ -39,15 +39,22 @@ export function SiteHeader({
   themeLabel
 }: SiteHeaderProps) {
   const { theme: globalTheme, toggleTheme } = useSiteTheme();
+  const headerElementRef = useRef<HTMLElement | null>(null);
   const mainNavRef = useRef<HTMLElement | null>(null);
   const categoryActiveMaskRef = useRef<HTMLSpanElement | null>(null);
   const categoryHoverMaskRef = useRef<HTMLSpanElement | null>(null);
-  const categoryLinkRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+  const categoryLinkRefs = useRef<Array<HTMLElement | null>>([]);
   const languageControlRef = useRef<HTMLDivElement | null>(null);
   const headerFrameRef = useRef<number | null>(null);
+  const headerHoverCloseTimerRef = useRef<number | null>(null);
+  const categoryMaskReadyTimerRef = useRef<number | null>(null);
+  const isHeaderHoveredRef = useRef(false);
+  const isHeaderHiddenRef = useRef(false);
   const lastHeaderScrollYRef = useRef(0);
 
   const [activeLanguage, setActiveLanguage] = useState("KR");
+  const [isCategoryMaskReady, setIsCategoryMaskReady] = useState(true);
+  const [isHeaderHovered, setIsHeaderHovered] = useState(false);
   const [isHeaderHidden, setIsHeaderHidden] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -62,6 +69,8 @@ export function SiteHeader({
   const handleThemeToggle = onThemeToggle ?? toggleTheme;
   const ThemeIcon = activeTheme === "day" ? Moon : Sun;
   const resolvedThemeLabel = themeLabel ?? (activeTheme === "day" ? "Switch to night version" : "Switch to day version");
+  const isHeaderActuallyHidden = isHeaderHidden && !isHeaderHovered;
+  const isHeaderSolid = isHeaderHovered || languageOpen || openBranchSection !== null;
   const getActiveBranchHref = useCallback(
     (sectionLabel: string) => {
       if (activeBranchHref) return activeBranchHref;
@@ -72,7 +81,7 @@ export function SiteHeader({
     [activeBranchHref, activeLegacyHref, activeSpecialtyHref]
   );
 
-  const positionCategoryMask = useCallback((mask: HTMLSpanElement | null, link: HTMLAnchorElement | null) => {
+  const positionCategoryMask = useCallback((mask: HTMLSpanElement | null, link: HTMLElement | null) => {
     const nav = mainNavRef.current;
 
     if (!mask || !link || !nav || window.getComputedStyle(nav).display === "none") {
@@ -99,8 +108,46 @@ export function SiteHeader({
     }
   }, []);
 
+  const clearCategoryMaskReadyTimer = useCallback(() => {
+    if (categoryMaskReadyTimerRef.current !== null) {
+      window.clearTimeout(categoryMaskReadyTimerRef.current);
+      categoryMaskReadyTimerRef.current = null;
+    }
+  }, []);
+
+  const showCategoryMasksWhenStable = useCallback(
+    (delay = 0) => {
+      clearCategoryMaskReadyTimer();
+
+      const sync = () => {
+        setIsCategoryMaskReady(true);
+        window.requestAnimationFrame(syncActiveCategoryMask);
+      };
+
+      if (delay <= 0) {
+        sync();
+        return;
+      }
+
+      setIsCategoryMaskReady(false);
+      categoryMaskReadyTimerRef.current = window.setTimeout(() => {
+        categoryMaskReadyTimerRef.current = null;
+        sync();
+      }, delay);
+    },
+    [clearCategoryMaskReadyTimer, syncActiveCategoryMask]
+  );
+
+  const hideCategoryMasksDuringMotion = useCallback(() => {
+    clearCategoryMaskReadyTimer();
+    setIsCategoryMaskReady(false);
+    hideCategoryHoverMask();
+  }, [clearCategoryMaskReadyTimer, hideCategoryHoverMask]);
+
   const showHoverMask = useCallback(
     (index: number) => {
+      if (!isCategoryMaskReady) return;
+
       if (index === activeCategoryIndex) {
         hideCategoryHoverMask();
         return;
@@ -108,8 +155,53 @@ export function SiteHeader({
 
       positionCategoryMask(categoryHoverMaskRef.current, categoryLinkRefs.current[index] ?? null);
     },
-    [activeCategoryIndex, hideCategoryHoverMask, positionCategoryMask]
+    [activeCategoryIndex, hideCategoryHoverMask, isCategoryMaskReady, positionCategoryMask]
   );
+
+  const revealHeaderFromHover = useCallback(() => {
+    const wasHidden = isHeaderHiddenRef.current || isHeaderActuallyHidden;
+
+    if (headerHoverCloseTimerRef.current !== null) {
+      window.clearTimeout(headerHoverCloseTimerRef.current);
+      headerHoverCloseTimerRef.current = null;
+    }
+
+    isHeaderHoveredRef.current = true;
+    isHeaderHiddenRef.current = false;
+    setIsHeaderHovered(true);
+    setIsHeaderHidden(false);
+
+    if (wasHidden) {
+      hideCategoryMasksDuringMotion();
+      showCategoryMasksWhenStable(320);
+    } else {
+      showCategoryMasksWhenStable();
+    }
+  }, [hideCategoryMasksDuringMotion, isHeaderActuallyHidden, showCategoryMasksWhenStable]);
+
+  const releaseHeaderHover = useCallback(() => {
+    if (headerHoverCloseTimerRef.current !== null) {
+      window.clearTimeout(headerHoverCloseTimerRef.current);
+    }
+
+    headerHoverCloseTimerRef.current = window.setTimeout(() => {
+      isHeaderHoveredRef.current = false;
+      setIsHeaderHovered(false);
+      setOpenBranchSection(null);
+      hideCategoryHoverMask();
+
+      if (scrollHideEnabled && window.scrollY > 24) {
+        isHeaderHiddenRef.current = true;
+        setIsHeaderHidden(true);
+        hideCategoryMasksDuringMotion();
+        setLanguageOpen(false);
+      } else {
+        showCategoryMasksWhenStable();
+      }
+
+      headerHoverCloseTimerRef.current = null;
+    }, 140);
+  }, [hideCategoryHoverMask, hideCategoryMasksDuringMotion, scrollHideEnabled, showCategoryMasksWhenStable]);
 
   useEffect(() => {
     let disposed = false;
@@ -128,6 +220,56 @@ export function SiteHeader({
       window.removeEventListener("resize", handleResize);
     };
   }, [syncActiveCategoryMask]);
+
+  useEffect(() => {
+    return () => {
+      if (headerHoverCloseTimerRef.current !== null) {
+        window.clearTimeout(headerHoverCloseTimerRef.current);
+      }
+      clearCategoryMaskReadyTimer();
+    };
+  }, [clearCategoryMaskReadyTimer]);
+
+  useEffect(() => {
+    if (!scrollHideEnabled || !isHeaderHovered) return;
+
+    const clearPendingClose = () => {
+      if (headerHoverCloseTimerRef.current !== null) {
+        window.clearTimeout(headerHoverCloseTimerRef.current);
+        headerHoverCloseTimerRef.current = null;
+      }
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+
+      const header = headerElementRef.current;
+      if (!header) return;
+
+      const rect = header.getBoundingClientRect();
+      const verticalBuffer = openBranchSection ? 22 : 6;
+      const isInsideHeader =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom + verticalBuffer;
+
+      if (isInsideHeader) {
+        clearPendingClose();
+        return;
+      }
+
+      releaseHeaderHover();
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("blur", releaseHeaderHover);
+
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("blur", releaseHeaderHover);
+    };
+  }, [isHeaderHovered, openBranchSection, releaseHeaderHover, scrollHideEnabled]);
 
   useEffect(() => {
     if (!languageOpen) return;
@@ -169,7 +311,9 @@ export function SiteHeader({
 
   useEffect(() => {
     if (!scrollHideEnabled) {
+      isHeaderHiddenRef.current = false;
       setIsHeaderHidden(false);
+      showCategoryMasksWhenStable();
       lastHeaderScrollYRef.current = 0;
       return;
     }
@@ -182,13 +326,29 @@ export function SiteHeader({
       const y = window.scrollY;
       const delta = y - lastHeaderScrollYRef.current;
 
-      if (y <= topThreshold) {
+      if (isHeaderHoveredRef.current) {
+        isHeaderHiddenRef.current = false;
         setIsHeaderHidden(false);
+        lastHeaderScrollYRef.current = y;
+        return;
+      }
+
+      if (y <= topThreshold) {
+        const wasHidden = isHeaderHiddenRef.current;
+        isHeaderHiddenRef.current = false;
+        setIsHeaderHidden(false);
+        if (wasHidden) showCategoryMasksWhenStable(240);
       } else if (delta > directionThreshold) {
+        isHeaderHiddenRef.current = true;
         setIsHeaderHidden(true);
         setLanguageOpen(false);
+        setOpenBranchSection(null);
+        hideCategoryMasksDuringMotion();
       } else if (delta < -directionThreshold) {
+        const wasHidden = isHeaderHiddenRef.current;
+        isHeaderHiddenRef.current = false;
         setIsHeaderHidden(false);
+        if (wasHidden) showCategoryMasksWhenStable(260);
       }
 
       lastHeaderScrollYRef.current = y;
@@ -210,11 +370,11 @@ export function SiteHeader({
       }
       window.removeEventListener("scroll", requestHeaderVisibilityUpdate);
     };
-  }, [scrollHideEnabled]);
+  }, [hideCategoryMasksDuringMotion, scrollHideEnabled, showCategoryMasksWhenStable]);
 
   const renderThemeControl = (mobile = false) => {
     const controlClassName = mobile
-      ? cx("mobile-theme-switch", ready && "is-ready", isHeaderHidden && "is-header-hidden")
+      ? cx("mobile-theme-switch", ready && "is-ready", isHeaderActuallyHidden && "is-header-hidden")
       : "icon-button theme-toggle";
 
     return (
@@ -226,9 +386,27 @@ export function SiteHeader({
 
   return (
     <>
+      {scrollHideEnabled ? (
+        <div
+          aria-hidden="true"
+          className={cx("hero-header-hover-zone", isHeaderActuallyHidden && "is-enabled")}
+          onPointerEnter={revealHeaderFromHover}
+        />
+      ) : null}
+
       <header
-        className={cx("hero-header", scrollHideEnabled && "is-scroll-reactive", isHeaderHidden && "is-header-hidden", className)}
+        ref={headerElementRef}
+        className={cx(
+          "hero-header",
+          scrollHideEnabled && "is-scroll-reactive",
+          isHeaderActuallyHidden && "is-header-hidden",
+          isHeaderSolid && "is-header-solid",
+          isCategoryMaskReady && "is-category-mask-ready",
+          className
+        )}
         aria-label={ariaLabel}
+        onPointerEnter={revealHeaderFromHover}
+        onPointerLeave={releaseHeaderHover}
       >
         <nav className={cx("site-links", reveal && "reveal-item")} aria-label="Site links">
           {siteLinks.map((link) => (
@@ -285,18 +463,35 @@ export function SiteHeader({
                     }
                   }}
                 >
-                  <a
-                    className={isActive ? "is-active" : ""}
-                    href={item.href}
-                    ref={(node) => {
-                      categoryLinkRefs.current[index] = node;
-                    }}
-                    onPointerEnter={() => showHoverMask(index)}
-                    onMouseEnter={() => showHoverMask(index)}
-                    onFocus={() => showHoverMask(index)}
-                  >
-                    {item.label}
-                  </a>
+                  {hasBranches ? (
+                    <button
+                      className={isActive ? "is-active" : ""}
+                      type="button"
+                      aria-haspopup="true"
+                      aria-expanded={isBranchVisible}
+                      ref={(node) => {
+                        categoryLinkRefs.current[index] = node;
+                      }}
+                      onPointerEnter={() => showHoverMask(index)}
+                      onMouseEnter={() => showHoverMask(index)}
+                      onFocus={() => showHoverMask(index)}
+                    >
+                      {item.label}
+                    </button>
+                  ) : (
+                    <a
+                      className={isActive ? "is-active" : ""}
+                      href={item.href}
+                      ref={(node) => {
+                        categoryLinkRefs.current[index] = node;
+                      }}
+                      onPointerEnter={() => showHoverMask(index)}
+                      onMouseEnter={() => showHoverMask(index)}
+                      onFocus={() => showHoverMask(index)}
+                    >
+                      {item.label}
+                    </a>
+                  )}
                   {hasBranches ? (
                     <nav className="branch-nav" aria-label={`${item.label.toLowerCase()} branch navigation`}>
                       {branches.map((branch) => (
@@ -394,8 +589,15 @@ export function SiteHeader({
             <div className={cx("mobile-category-group", branches.length > 0 && "has-mobile-branches")} key={item.label}>
               <a
                 className={cx("mobile-category-link", index === activeCategoryIndex && "is-active")}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
+                href={branches.length > 0 ? "#" : item.href}
+                onClick={(event) => {
+                  if (branches.length > 0) {
+                    event.preventDefault();
+                    return;
+                  }
+
+                  setMobileMenuOpen(false);
+                }}
               >
                 {item.label}
               </a>

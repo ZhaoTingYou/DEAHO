@@ -31,7 +31,11 @@ function getPageTone(theme: SiteTheme) {
   const path = window.location.pathname;
 
   if (path === "/day") return "light";
-  if ((path === "/" || path === "/chronicle" || path.startsWith("/news") || path === "/golf") && theme === "day") return "light";
+  if (
+    (path === "/" || path === "/chronicle" || path.startsWith("/news") || path === "/golf" || path.startsWith("/specialty")) &&
+    theme === "day"
+  )
+    return "light";
   if (path.startsWith("/legacy/credibility") && theme === "day") return "light";
   return "dark";
 }

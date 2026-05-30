@@ -1,0 +1,90 @@
+{
+  "project": "DAEHO Legacy Credibility Motion Assets",
+  "palette": {
+    "primary": "#345B7D",
+    "secondary": "#BDCDDB",
+    "base": "#FFFFFF",
+    "accentGold": "#BE9A5B"
+  },
+  "global": {
+    "trigger": "section enters 70-75% viewport",
+    "easing": "cubic-bezier(0.22,1,0.36,1)",
+    "recommendedLibraries": [
+      "GSAP",
+      "ScrollTrigger",
+      "SVG path animation"
+    ]
+  },
+  "sections": [
+    {
+      "id": "01-hero",
+      "name": "Proven Without Exception",
+      "mainSequence": [
+        "background fade",
+        "nav stagger",
+        "title line reveal",
+        "ring group fade/scale",
+        "tab underline draw"
+      ],
+      "duration": "1.2s main, 0.6s nav, 0.9s title"
+    },
+    {
+      "id": "02-experience",
+      "name": "38 Years of Experience",
+      "mainSequence": [
+        "38 count-up",
+        "timeline draw",
+        "mountain route stroke draw",
+        "nodes appear",
+        "flag flutter"
+      ],
+      "duration": "1.5s number, 1.4s path"
+    },
+    {
+      "id": "03-market",
+      "name": "Market Leader",
+      "mainSequence": [
+        "title reveal",
+        "metrics fade-up",
+        "columns scaleY",
+        "gold route draw",
+        "icons pop",
+        "ring appear"
+      ],
+      "duration": "0.45s per column"
+    },
+    {
+      "id": "04-zero-defect",
+      "name": "0% Delivery Accident",
+      "mainSequence": [
+        "0% character reveal",
+        "shield scale-in",
+        "box slide-in",
+        "logistics line draw"
+      ],
+      "duration": "0.9s shield"
+    },
+    {
+      "id": "05-rd",
+      "name": "Continuous R&D",
+      "mainSequence": [
+        "title clip reveal",
+        "factory svg draw",
+        "innovation orbit draw",
+        "nodes appear"
+      ],
+      "duration": "1.6s blueprint"
+    },
+    {
+      "id": "06-integration",
+      "name": "100% Vertical Integration",
+      "mainSequence": [
+        "100 count-up",
+        "center circle draw",
+        "process ring stroke",
+        "six nodes stagger"
+      ],
+      "duration": "1.4s count-up"
+    }
+  ]
+}

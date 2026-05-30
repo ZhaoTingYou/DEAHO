@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type MouseEvent, type PointerEvent } from "react";
 import { ArrowRight, Gem, PackageCheck, ShieldCheck, Sparkles } from "lucide-react";
 import { golfDetails, golfPackagingNotes, golfShaftColors } from "@/data/golf";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { useSiteTheme } from "@/components/layout/ThemeProvider";
 
 const cx = (...classes: Array<string | false | null | undefined>) => classes.filter(Boolean).join(" ");
+const golfViews = ["FRONT", "SIDE", "ANGLE", "DETAIL"] as const;
 
 export function GolfPage() {
   const [activeColor, setActiveColor] = useState(golfShaftColors[3].label);
+  const [activeView, setActiveView] = useState<(typeof golfViews)[number]>("FRONT");
   const { theme, toggleTheme } = useSiteTheme();
   const isDayTheme = theme === "day";
   const themeLabel = isDayTheme ? "Switch to night version" : "Switch to day version";
@@ -17,9 +19,16 @@ export function GolfPage() {
     () => golfShaftColors.find((color) => color.label === activeColor) ?? golfShaftColors[0],
     [activeColor]
   );
+  const activeViewKey = activeView.toLowerCase();
 
   useEffect(() => {
     const revealNodes = Array.from(document.querySelectorAll<HTMLElement>(".golf-reveal"));
+
+    if (!("IntersectionObserver" in window)) {
+      revealNodes.forEach((node) => node.classList.add("is-visible"));
+      return undefined;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -34,6 +43,28 @@ export function GolfPage() {
 
     revealNodes.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
+  }, []);
+
+  const handleAnchorClick = useCallback((event: MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    event.preventDefault();
+    document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.history.replaceState(null, "", `#${targetId}`);
+  }, []);
+
+  const handleHeroPointerMove = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "touch") return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+
+    event.currentTarget.style.setProperty("--golf-pointer-x", x.toFixed(3));
+    event.currentTarget.style.setProperty("--golf-pointer-y", y.toFixed(3));
+  }, []);
+
+  const resetHeroPointer = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    event.currentTarget.style.setProperty("--golf-pointer-x", "0");
+    event.currentTarget.style.setProperty("--golf-pointer-y", "0");
   }, []);
 
   return (
@@ -63,12 +94,12 @@ export function GolfPage() {
             THE GAME
           </h1>
           <p>골프의 구조를 하나의 오브제로 재해석하다</p>
-          <a className="golf-button" href="#golf-collection">
+          <a className="golf-button" href="#golf-collection" onClick={(event) => handleAnchorClick(event, "golf-collection")}>
             <span>Discover collection</span>
             <ArrowRight aria-hidden="true" />
           </a>
         </div>
-        <div className="golf-hero-visual golf-reveal">
+        <div className="golf-hero-visual golf-reveal" onPointerMove={handleHeroPointerMove} onPointerLeave={resetHeroPointer}>
           <img
             src={isDayTheme ? "/images/golf/golf-day-hero-product.jpg" : "/images/golf/golf-night-hero-product.jpg"}
             alt=""
@@ -116,6 +147,8 @@ export function GolfPage() {
               type="button"
               aria-pressed={color.label === activeColor}
               key={color.label}
+              onFocus={() => setActiveColor(color.label)}
+              onMouseEnter={() => setActiveColor(color.label)}
               onClick={() => setActiveColor(color.label)}
             >
               <img src={color.image} alt="" />
@@ -125,7 +158,7 @@ export function GolfPage() {
             </button>
           ))}
         </div>
-        <div className="golf-color-selected golf-reveal">
+        <div className="golf-color-selected golf-reveal" aria-live="polite">
           <span>{selectedColor.label}</span>
           <p>{selectedColor.description}</p>
           <i style={{ background: selectedColor.swatch }} aria-hidden="true" />
@@ -169,18 +202,31 @@ export function GolfPage() {
             A STATEMENT.
           </h2>
           <p>필드 위의 취향, 일상에 새겨지는 선언.</p>
-          <a className="golf-button is-dark" href="#golf-package">
+          <a className="golf-button is-dark" href="#golf-package" onClick={(event) => handleAnchorClick(event, "golf-package")}>
             <span>View collection</span>
             <ArrowRight aria-hidden="true" />
           </a>
         </div>
-        <img className="golf-statement-product golf-reveal" src="/images/golf/golf-day-statement-product.jpg" alt="" />
+        <img
+          className="golf-statement-product golf-reveal"
+          data-view={activeViewKey}
+          src="/images/golf/golf-day-statement-product.jpg"
+          alt=""
+        />
         <div className="golf-spec-strip golf-reveal" aria-label="Golf bracelet views">
-          {["FRONT", "SIDE", "ANGLE", "DETAIL"].map((item, index) => (
-            <span key={item}>
+          {golfViews.map((item, index) => (
+            <button
+              className={item === activeView ? "is-active" : ""}
+              type="button"
+              aria-pressed={item === activeView}
+              key={item}
+              onClick={() => setActiveView(item)}
+              onFocus={() => setActiveView(item)}
+              onMouseEnter={() => setActiveView(item)}
+            >
               <i>{String(index + 1).padStart(2, "0")}</i>
               {item}
-            </span>
+            </button>
           ))}
         </div>
       </section>
